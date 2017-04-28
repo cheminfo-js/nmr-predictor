@@ -78,5 +78,7 @@ describe('2D prediction', function () {
         const h1 = predictor.proton(molfile, {db: db1H});
         const prediction = predictor.twoD(h1, c13, molfile, {minLength: 1, maxLength: 4});
         prediction.length.should.equal(24);
+        prediction[0].fromChemicalShift.should.greaterThan(0);
+        prediction[0].toChemicalShift.should.greaterThan(0);
     });
 });

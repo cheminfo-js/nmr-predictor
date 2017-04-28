@@ -1,10 +1,11 @@
 'use strict';
 
-const OCLE = require('openchemlib-extended-minimal');
+const OCLE = require('openchemlib-extended');
 
 const group = require('./group');
 
 module.exports = function queryByHose(molecule, db, options) {
+    //molecule.addImplicitHydrogens();
     const atomLabel = options.atomLabel || 'H';
     const use = options.use;
     var algorithm = options.algorithm || 0;

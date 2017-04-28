@@ -16,6 +16,23 @@ module.exports = function twoD(dim1, dim2, molecule, options) {
     options = Object.assign({minLength: 1, maxLength: 3}, options, {fromLabel: fromAtomLabel, toLabel: toAtomLabel});
 
     var paths = molecule.getAllPaths(options);
+    var inverseMap = {};
+    if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
+        molecule.removeExplicitHydrogens();
+        var diaIDsC = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'C'});
+        diaIDsC.forEach(diaID => {
+            inverseMap[diaID.atoms.join(',')] = diaID.oclID;
+        });
+    }
+    //console.log(paths);
+    paths.forEach(path => {
+        if (path.fromLabel === 'C') {
+            path.fromDiaID = inverseMap[path.fromAtoms.join(',')];
+        }
+        if (path.toLabel === 'C') {
+            path.toDiaID = inverseMap[path.toAtoms.join(',')];
+        }
+    });
 
     var idMap1 = {};
     dim1.forEach(prediction => idMap1[prediction.diaIDs[0]] = prediction);

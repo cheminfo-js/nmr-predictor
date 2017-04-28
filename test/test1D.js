@@ -66,14 +66,28 @@ describe('HOSE assignment prediction', function () {
     });
 
     it('13C chemical shift prediction expanded', function () {
+        //console.log(db13C);
         const prediction = predictor.carbon(molfile, {db: db13C});
-        prediction[0].delta.should.greaterThan(0);
         prediction.length.should.eql(8);
+        prediction[0].delta.should.greaterThan(0);
+        prediction[1].delta.should.greaterThan(0);
+        prediction[2].delta.should.greaterThan(0);
+        prediction[3].delta.should.greaterThan(0);
+        prediction[4].delta.should.greaterThan(0);
+        prediction[5].delta.should.greaterThan(0);
+        prediction[6].delta.should.greaterThan(0);
+        prediction[7].delta.should.greaterThan(0);
+
     });
 
     it('13C chemical shift prediction grouped', function () {
         const prediction = predictor.carbon(molfile, {group: true, db: db13C});
-        prediction[0].delta.should.greaterThan(0);
         prediction.length.should.eql(6);
+        prediction[0].delta.should.greaterThan(0);
+        prediction[1].delta.should.greaterThan(0);
+        prediction[2].delta.should.greaterThan(0);
+        prediction[3].delta.should.greaterThan(0);
+        prediction[4].delta.should.greaterThan(0);
+        prediction[5].delta.should.greaterThan(0);
     });
 });

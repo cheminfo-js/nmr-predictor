@@ -20,7 +20,14 @@ module.exports = function options(molecule, options) {
     }
     options = Object.assign({}, defaultOptions, options);
 
-    molecule.addImplicitHydrogens();
+    if (options.atomLabel === 'H') {
+        molecule.addImplicitHydrogens();
+    }
+    //@TODO Should be removed
+    if (options.atomLabel === 'C') {
+        //molecule.addImplicitHydrogens();
+        molecule.removeExplicitHydrogens();
+    }
 
     return [molecule, options];
 };
