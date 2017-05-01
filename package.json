@@ -33,7 +33,7 @@
   "dependencies": {
     "ml-matrix": "^2.3.0",
     "new-array": "^1.0.0",
-    "openchemlib-extended": "1.14.4",
+    "openchemlib-extended-minimal": "2.0.0",
     "superagent": "^3.5.0"
   }
 }
