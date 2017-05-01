@@ -67,7 +67,8 @@ function fromSpinus(molecule) {
             };
 
             for (j = 0; j < nspins; j++) {
-                if (jc[i][j] !== 0) {
+                //Do not consider coupling constant between diasterotopic atoms
+                if (atoms[idsKeys[j]] !== result[i].diaIDs[0] && jc[i][j] !== 0) {
                     result[i].j.push({
                         assignment: idsKeys[j],
                         diaID: atoms[idsKeys[j]],
