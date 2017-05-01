@@ -1506,23 +1506,20 @@ module.exports = function group(prediction, options) {
         }
 
         for (i = 0; i < prediction.length; i++) {
-            let j = prediction.length;
+            let j = prediction[i].j;
             if (j && j.length > 0) {
                 j.sort((a, b) => {
                     return a.diaID.localeCompare(b.diaID);
                 });
                 //It is supposed that multiplicity is always `d`
+                //Remove the assignment because it is not correct anymore
+                delete j[j.length - 1].assignment;
                 for (k = j.length - 2; k >= 0; k--) {
-                    if (j[k].diaID === j[k + 1].diaID) {
-                        j[k].coupling += j[k + 1].coupling;
+                    delete j[k].assignment;
+                    if (j[k].diaID === j[k + 1].diaID && j[k].coupling === j[k + 1].coupling) {
                         j[k].multiplicity += j[k + 1].multiplicity;
-                        j[k].assignment += ',' + j[k + 1].assignment;
+                        //j[k].assignment += ',' + j[k + 1].assignment;
                         j.splice(k + 1, 1);
-                    }
-                }
-                for (k = 0; k < j.length - 2; k++) {
-                    if (j[k].multiplicity.length > 0) {
-                        j.coupling /= j[k].multiplicity.length;
                     }
                 }
             }
