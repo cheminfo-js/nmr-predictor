@@ -1,6 +1,5 @@
 'use strict';
 
-const Matrix = require('ml-matrix');
 const newArray = require('new-array');
 const superagent = require('superagent');
 
@@ -94,10 +93,11 @@ function spinusParser(result) {
     var cs = new Array(nspins);
     var integrals = new Array(nspins);
     var ids = {};
-    var jc = Matrix.zeros(nspins, nspins);
+    var jc = new Array(nspins);
     var i, j;
 
     for (i = 0; i < nspins; i++) {
+        jc[i] = newArray(nspins, 0);
         var tokens = lines[i].split('\t');
         cs[i] = +tokens[2];
         ids[tokens[0] - 1] = i;
