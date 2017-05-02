@@ -84,7 +84,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 __webpack_require__(31);
-var abstractMatrix = __webpack_require__(10);
+var abstractMatrix = __webpack_require__(9);
 var util = __webpack_require__(2);
 
 class Matrix extends abstractMatrix(Array) {
@@ -231,7 +231,7 @@ Matrix.abstractMatrix = abstractMatrix;
 "use strict";
 
 
-var abstractMatrix = __webpack_require__(10);
+var abstractMatrix = __webpack_require__(9);
 var Matrix = __webpack_require__(0);
 
 class BaseView extends abstractMatrix() {
@@ -488,17 +488,6 @@ exports.getFilled2DArray = function (rows, columns, value) {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(0).Matrix;
-module.exports.Decompositions = module.exports.DC = __webpack_require__(30);
-
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports) {
 
 /**
@@ -517,7 +506,7 @@ module.exports = isObject;
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 var g;
@@ -544,7 +533,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -563,7 +552,7 @@ if (typeof window !== 'undefined') { // Browser window
 
 var Emitter = __webpack_require__(21);
 var RequestBase = __webpack_require__(69);
-var isObject = __webpack_require__(6);
+var isObject = __webpack_require__(5);
 var isFunction = __webpack_require__(68);
 var ResponseBase = __webpack_require__(70);
 var shouldRetry = __webpack_require__(71);
@@ -1483,7 +1472,7 @@ request.put = function(url, data, fn){
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1529,7 +1518,7 @@ module.exports = function group(prediction, options) {
 };
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1537,8 +1526,8 @@ module.exports = function group(prediction, options) {
 
 module.exports = abstractMatrix;
 
-var LuDecomposition = __webpack_require__(11);
-var SvDecomposition = __webpack_require__(12);
+var LuDecomposition = __webpack_require__(10);
+var SvDecomposition = __webpack_require__(11);
 var arrayUtils = __webpack_require__(24);
 var util = __webpack_require__(2);
 var MatrixTransposeView = __webpack_require__(38);
@@ -3354,7 +3343,7 @@ function abstractMatrix(superCtor) {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3535,7 +3524,7 @@ module.exports = LuDecomposition;
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4053,6 +4042,17 @@ SingularValueDecomposition.prototype = {
 };
 
 module.exports = SingularValueDecomposition;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(0).Matrix;
+module.exports.Decompositions = module.exports.DC = __webpack_require__(30);
 
 
 /***/ }),
@@ -4794,7 +4794,7 @@ module.exports = function extend(OCL) {
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(65)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(65)))
 
 /***/ }),
 /* 17 */
@@ -4805,7 +4805,7 @@ module.exports = function extend(OCL) {
 
 const OCLE = __webpack_require__(59);
 
-const group = __webpack_require__(9);
+const group = __webpack_require__(8);
 
 module.exports = function queryByHose(molecule, db, options) {
     //molecule.addImplicitHydrogens();
@@ -4932,11 +4932,10 @@ module.exports = function queryByHose(molecule, db, options) {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-const Matrix = __webpack_require__(5);
 const newArray = __webpack_require__(40);
-const superagent = __webpack_require__(8);
+const superagent = __webpack_require__(7);
 
-const group = __webpack_require__(9);
+const group = __webpack_require__(8);
 const normalizeOptions = __webpack_require__(3);
 
 /**
@@ -5031,10 +5030,11 @@ function spinusParser(result) {
     var cs = new Array(nspins);
     var integrals = new Array(nspins);
     var ids = {};
-    var jc = Matrix.zeros(nspins, nspins);
+    var jc = new Array(nspins);
     var i, j;
 
     for (i = 0; i < nspins; i++) {
+        jc[i] = newArray(nspins, 0);
         var tokens = lines[i].split('\t');
         cs[i] = +tokens[2];
         ids[tokens[0] - 1] = i;
@@ -5168,7 +5168,7 @@ function getCouplingConstant(idMap, fromDiaID, toDiaID) {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-const superagent = __webpack_require__(8);
+const superagent = __webpack_require__(7);
 
 const normalizeOptions = __webpack_require__(3);
 const queryByHose = __webpack_require__(17);
@@ -5968,7 +5968,7 @@ function SNV(data) {
 "use strict";
 
 
-const Matrix = __webpack_require__(5);
+const Matrix = __webpack_require__(12);
 
 /**
  * Algorithm that finds the shortest distance from one node to the other
@@ -7066,9 +7066,9 @@ module.exports = QrDecomposition;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var SingularValueDecomposition = __webpack_require__(12);
+var SingularValueDecomposition = __webpack_require__(11);
 var EigenvalueDecomposition = __webpack_require__(28);
-var LuDecomposition = __webpack_require__(11);
+var LuDecomposition = __webpack_require__(10);
 var QrDecomposition = __webpack_require__(29);
 var CholeskyDecomposition = __webpack_require__(27);
 
@@ -8382,7 +8382,7 @@ module.exports = {
 
 
 var floydWarshall = __webpack_require__(26);
-var Matrix = __webpack_require__(5);
+var Matrix = __webpack_require__(12);
 
 module.exports = function getAllPaths() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -9638,7 +9638,7 @@ dW._S=function _S(a,b,c,d){var e,f;if(!b){return c}else{e=a.a.eb(c.c,b.c);if(e==
 
 })(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
 /* 62 */
@@ -9837,7 +9837,7 @@ lS.rR=function rR(a,b,c){var d,e,f,g,h,i,j,k;f=0;for(j=0;j<c;){++f;e=a[b+j];if((
 
 })(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
 /* 63 */
@@ -9855,7 +9855,7 @@ module.exports = __webpack_require__(62);
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	Papa Parse
-	v4.3.1
+	v4.3.2
 	https://github.com/mholt/PapaParse
 */
 (function(root, factory)
@@ -10052,19 +10052,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	{
 		_config = _config || {};
         var dynamicTyping = _config.dynamicTyping || false;
-        if (typeof dynamicTyping == 'function') {
+        if (isFunction(dynamicTyping)) {
             _config.dynamicTypingFunction = dynamicTyping;
             // Will be filled on first row call
             dynamicTyping = {};
         }
         _config.dynamicTyping = dynamicTyping;
-        _config.shouldApplyDynamicTyping = function(field) {
-            // Cache function values to avoid calling it for each row
-            if (_config.dynamicTypingFunction && _config.dynamicTyping[field] === undefined) {
-                _config.dynamicTyping[field] = _config.dynamicTypingFunction(field);
-            }
-            return (_config.dynamicTyping[field] || _config.dynamicTyping) === true
-        }
 
 		if (_config.worker && Papa.WORKERS_SUPPORTED)
 		{
@@ -10098,7 +10091,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 			else
 				streamer = new StringStreamer(_config);
 		}
-		else if (_input.readable === true && typeof _input.read === 'function' && typeof _input.on === 'function')
+		else if (_input.readable === true && isFunction(_input.read) && isFunction(_input.on))
 		{
 			streamer = new ReadableStreamStreamer(_config);
 		}
@@ -10752,7 +10745,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 				}
 				_results.meta.delimiter = _config.delimiter;
 			}
-			else if(typeof _config.delimiter === 'function')
+			else if(isFunction(_config.delimiter))
 			{
 				_config.delimiter = _config.delimiter(input);
 				_results.meta.delimiter = _config.delimiter;
@@ -10838,9 +10831,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 			_results.data.splice(0, 1);
 		}
 
+        function shouldApplyDynamicTyping(field) {
+            // Cache function values to avoid calling it for each row
+            if (_config.dynamicTypingFunction && _config.dynamicTyping[field] === undefined) {
+                _config.dynamicTyping[field] = _config.dynamicTypingFunction(field);
+            }
+            return (_config.dynamicTyping[field] || _config.dynamicTyping) === true
+        }
+
 		function parseDynamic(field, value)
 		{
-			if (_config.shouldApplyDynamicTyping(field))
+			if (shouldApplyDynamicTyping(field))
 			{
 				if (value === 'true' || value === 'TRUE')
 					return true;
@@ -11040,7 +11041,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 				delimLen = delim.length,
 				newlineLen = newline.length,
 				commentsLen = comments.length;
-			var stepIsFunction = typeof step === 'function';
+			var stepIsFunction = isFunction(step);
 
 			// Establish starting state
 			cursor = 0;
@@ -11797,7 +11798,7 @@ module.exports = parse;
  * @return {Boolean}
  * @api private
  */
-var isObject = __webpack_require__(6);
+var isObject = __webpack_require__(5);
 
 function isFunction(fn) {
   var tag = isObject(fn) ? Object.prototype.toString.call(fn) : '';
@@ -11814,7 +11815,7 @@ module.exports = isFunction;
 /**
  * Module of mixed-in functions shared between node and client code
  */
-var isObject = __webpack_require__(6);
+var isObject = __webpack_require__(5);
 
 /**
  * Expose `RequestBase`.
