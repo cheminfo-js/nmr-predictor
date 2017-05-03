@@ -117,5 +117,5 @@ module.exports = function queryByHose(molecule, db, options) {
             }
         }
     }
-    return group(toReturn, options);
+    return options.group ? group(toReturn) : toReturn;
 };
