@@ -1,21 +1,27 @@
 'use strict';
 
-module.exports = function group(prediction) {
-    prediction.sort((a, b) => {
+/**
+ *
+ * @param signals
+ * @returns {*}
+ */
+
+module.exports = function group(signals) {
+    signals.sort((a, b) => {
         if (a.diaIDs[0] < b.diaIDs[0]) return -1;
         if (a.diaIDs[0] > b.diaIDs[0]) return 1;
         return 0;
     });
-    for (let i = prediction.length - 2; i >= 0; i--) {
-        if (prediction[i].diaIDs[0] === prediction[i + 1].diaIDs[0]) {
-            prediction[i].integral += prediction[i + 1].integral;
-            prediction[i].atomIDs = prediction[i].atomIDs.concat(prediction[i + 1].atomIDs);
-            prediction.splice(i + 1, 1);
+    for (let i = signals.length - 2; i >= 0; i--) {
+        if (signals[i].diaIDs[0] === signals[i + 1].diaIDs[0]) {
+            signals[i].integral += signals[i + 1].integral;
+            signals[i].atomIDs = signals[i].atomIDs.concat(signals[i + 1].atomIDs);
+            signals.splice(i + 1, 1);
         }
     }
 
-    for (let i = 0; i < prediction.length; i++) {
-        let j = prediction[i].j;
+    for (let i = 0; i < signals.length; i++) {
+        let j = signals[i].j;
         if (j && j.length > 0) {
             j.sort((a, b) => {
                 return a.diaID.localeCompare(b.diaID);
@@ -33,5 +39,5 @@ module.exports = function group(prediction) {
             }
         }
     }
-    return prediction;
+    return signals;
 };

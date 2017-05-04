@@ -3,7 +3,7 @@
 const newArray = require('new-array');
 const superagent = require('superagent');
 
-const group = require('./group');
+const group = require('./groupSignals');
 const normalizeOptions = require('./normalizeOptions');
 
 /**

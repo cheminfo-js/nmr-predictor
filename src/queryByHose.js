@@ -2,7 +2,7 @@
 
 const OCLE = require('openchemlib-extended');
 
-const group = require('./group');
+const group = require('./groupSignals');
 
 module.exports = function queryByHose(molecule, db, options) {
     //molecule.addImplicitHydrogens();
