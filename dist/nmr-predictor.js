@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -83,8 +83,8 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-__webpack_require__(31);
-var abstractMatrix = __webpack_require__(9);
+__webpack_require__(28);
+var abstractMatrix = __webpack_require__(7);
 var util = __webpack_require__(2);
 
 class Matrix extends abstractMatrix(Array) {
@@ -231,7 +231,7 @@ Matrix.abstractMatrix = abstractMatrix;
 "use strict";
 
 
-var abstractMatrix = __webpack_require__(9);
+var abstractMatrix = __webpack_require__(7);
 var Matrix = __webpack_require__(0);
 
 class BaseView extends abstractMatrix() {
@@ -406,47 +406,6 @@ exports.sumAll = function sumAll(matrix) {
 "use strict";
 
 
-var _require = __webpack_require__(41),
-    Molecule = _require.Molecule;
-
-var defaultOptions = {
-    atomLabel: 'H',
-    ignoreLabile: true,
-    use: 'median'
-};
-
-module.exports = function options(molecule, options) {
-    if (typeof molecule === 'string') {
-        if (molecule.split(/[\r\n]+/).length > 2) {
-            molecule = Molecule.fromMolfile(molecule);
-        } else {
-            // it is probably a SMILES
-            molecule = Molecule.fromSmiles(molecule);
-        }
-    } else if (!(molecule instanceof Molecule)) {
-        throw new Error('molecule must be a molfile string or Molecule instance');
-    }
-    options = Object.assign({}, defaultOptions, options);
-
-    if (options.atomLabel === 'H') {
-        molecule.addImplicitHydrogens();
-    }
-    //@TODO Should be removed
-    if (options.atomLabel === 'C') {
-        //molecule.addImplicitHydrogens();
-        molecule.removeExplicitHydrogens();
-    }
-
-    return [molecule, options];
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 exports.hypotenuse = function hypotenuse(a, b) {
     var r;
     if (Math.abs(a) > Math.abs(b)) {
@@ -481,6 +440,46 @@ exports.getFilled2DArray = function (rows, columns, value) {
         }
     }
     return array;
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const {Molecule} = __webpack_require__(41);
+
+const defaultOptions = {
+    atomLabel: 'H',
+    ignoreLabile: true,
+    use: 'median'
+};
+
+module.exports = function options(molecule, options) {
+    if (typeof molecule === 'string') {
+        if (molecule.split(/[\r\n]+/).length > 2) {
+            molecule = Molecule.fromMolfile(molecule);
+        } else { // it is probably a SMILES
+            molecule = Molecule.fromSmiles(molecule);
+        }
+    } else if (!(molecule instanceof Molecule)) {
+        throw new Error('molecule must be a molfile string or Molecule instance');
+    }
+    options = Object.assign({}, defaultOptions, options);
+
+    if (options.atomLabel === 'H') {
+        molecule.addImplicitHydrogens();
+    }
+    //@TODO Should be removed
+    if (options.atomLabel === 'C') {
+        //molecule.addImplicitHydrogens();
+        molecule.removeExplicitHydrogens();
+    }
+
+    return [molecule, options];
 };
 
 
@@ -534,1007 +533,22 @@ module.exports = g;
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Root reference for iframes.
- */
-
-var root;
-if (typeof window !== 'undefined') { // Browser window
-  root = window;
-} else if (typeof self !== 'undefined') { // Web Worker
-  root = self;
-} else { // Other environments
-  console.warn("Using browser-only version of superagent in non-browser environment");
-  root = this;
-}
-
-var Emitter = __webpack_require__(21);
-var RequestBase = __webpack_require__(69);
-var isObject = __webpack_require__(5);
-var isFunction = __webpack_require__(68);
-var ResponseBase = __webpack_require__(70);
-var shouldRetry = __webpack_require__(71);
-
-/**
- * Noop.
- */
-
-function noop(){};
-
-/**
- * Expose `request`.
- */
-
-var request = exports = module.exports = function(method, url) {
-  // callback
-  if ('function' == typeof url) {
-    return new exports.Request('GET', method).end(url);
-  }
-
-  // url first
-  if (1 == arguments.length) {
-    return new exports.Request('GET', method);
-  }
-
-  return new exports.Request(method, url);
-}
-
-exports.Request = Request;
-
-/**
- * Determine XHR.
- */
-
-request.getXHR = function () {
-  if (root.XMLHttpRequest
-      && (!root.location || 'file:' != root.location.protocol
-          || !root.ActiveXObject)) {
-    return new XMLHttpRequest;
-  } else {
-    try { return new ActiveXObject('Microsoft.XMLHTTP'); } catch(e) {}
-    try { return new ActiveXObject('Msxml2.XMLHTTP.6.0'); } catch(e) {}
-    try { return new ActiveXObject('Msxml2.XMLHTTP.3.0'); } catch(e) {}
-    try { return new ActiveXObject('Msxml2.XMLHTTP'); } catch(e) {}
-  }
-  throw Error("Browser-only verison of superagent could not find XHR");
-};
-
-/**
- * Removes leading and trailing whitespace, added to support IE.
- *
- * @param {String} s
- * @return {String}
- * @api private
- */
-
-var trim = ''.trim
-  ? function(s) { return s.trim(); }
-  : function(s) { return s.replace(/(^\s*|\s*$)/g, ''); };
-
-/**
- * Serialize the given `obj`.
- *
- * @param {Object} obj
- * @return {String}
- * @api private
- */
-
-function serialize(obj) {
-  if (!isObject(obj)) return obj;
-  var pairs = [];
-  for (var key in obj) {
-    pushEncodedKeyValuePair(pairs, key, obj[key]);
-  }
-  return pairs.join('&');
-}
-
-/**
- * Helps 'serialize' with serializing arrays.
- * Mutates the pairs array.
- *
- * @param {Array} pairs
- * @param {String} key
- * @param {Mixed} val
- */
-
-function pushEncodedKeyValuePair(pairs, key, val) {
-  if (val != null) {
-    if (Array.isArray(val)) {
-      val.forEach(function(v) {
-        pushEncodedKeyValuePair(pairs, key, v);
-      });
-    } else if (isObject(val)) {
-      for(var subkey in val) {
-        pushEncodedKeyValuePair(pairs, key + '[' + subkey + ']', val[subkey]);
-      }
-    } else {
-      pairs.push(encodeURIComponent(key)
-        + '=' + encodeURIComponent(val));
-    }
-  } else if (val === null) {
-    pairs.push(encodeURIComponent(key));
-  }
-}
-
-/**
- * Expose serialization method.
- */
-
- request.serializeObject = serialize;
-
- /**
-  * Parse the given x-www-form-urlencoded `str`.
-  *
-  * @param {String} str
-  * @return {Object}
-  * @api private
-  */
-
-function parseString(str) {
-  var obj = {};
-  var pairs = str.split('&');
-  var pair;
-  var pos;
-
-  for (var i = 0, len = pairs.length; i < len; ++i) {
-    pair = pairs[i];
-    pos = pair.indexOf('=');
-    if (pos == -1) {
-      obj[decodeURIComponent(pair)] = '';
-    } else {
-      obj[decodeURIComponent(pair.slice(0, pos))] =
-        decodeURIComponent(pair.slice(pos + 1));
-    }
-  }
-
-  return obj;
-}
-
-/**
- * Expose parser.
- */
-
-request.parseString = parseString;
-
-/**
- * Default MIME type map.
- *
- *     superagent.types.xml = 'application/xml';
- *
- */
-
-request.types = {
-  html: 'text/html',
-  json: 'application/json',
-  xml: 'application/xml',
-  urlencoded: 'application/x-www-form-urlencoded',
-  'form': 'application/x-www-form-urlencoded',
-  'form-data': 'application/x-www-form-urlencoded'
-};
-
-/**
- * Default serialization map.
- *
- *     superagent.serialize['application/xml'] = function(obj){
- *       return 'generated xml here';
- *     };
- *
- */
-
- request.serialize = {
-   'application/x-www-form-urlencoded': serialize,
-   'application/json': JSON.stringify
- };
-
- /**
-  * Default parsers.
-  *
-  *     superagent.parse['application/xml'] = function(str){
-  *       return { object parsed from str };
-  *     };
-  *
-  */
-
-request.parse = {
-  'application/x-www-form-urlencoded': parseString,
-  'application/json': JSON.parse
-};
-
-/**
- * Parse the given header `str` into
- * an object containing the mapped fields.
- *
- * @param {String} str
- * @return {Object}
- * @api private
- */
-
-function parseHeader(str) {
-  var lines = str.split(/\r?\n/);
-  var fields = {};
-  var index;
-  var line;
-  var field;
-  var val;
-
-  lines.pop(); // trailing CRLF
-
-  for (var i = 0, len = lines.length; i < len; ++i) {
-    line = lines[i];
-    index = line.indexOf(':');
-    field = line.slice(0, index).toLowerCase();
-    val = trim(line.slice(index + 1));
-    fields[field] = val;
-  }
-
-  return fields;
-}
-
-/**
- * Check if `mime` is json or has +json structured syntax suffix.
- *
- * @param {String} mime
- * @return {Boolean}
- * @api private
- */
-
-function isJSON(mime) {
-  return /[\/+]json\b/.test(mime);
-}
-
-/**
- * Initialize a new `Response` with the given `xhr`.
- *
- *  - set flags (.ok, .error, etc)
- *  - parse header
- *
- * Examples:
- *
- *  Aliasing `superagent` as `request` is nice:
- *
- *      request = superagent;
- *
- *  We can use the promise-like API, or pass callbacks:
- *
- *      request.get('/').end(function(res){});
- *      request.get('/', function(res){});
- *
- *  Sending data can be chained:
- *
- *      request
- *        .post('/user')
- *        .send({ name: 'tj' })
- *        .end(function(res){});
- *
- *  Or passed to `.send()`:
- *
- *      request
- *        .post('/user')
- *        .send({ name: 'tj' }, function(res){});
- *
- *  Or passed to `.post()`:
- *
- *      request
- *        .post('/user', { name: 'tj' })
- *        .end(function(res){});
- *
- * Or further reduced to a single call for simple cases:
- *
- *      request
- *        .post('/user', { name: 'tj' }, function(res){});
- *
- * @param {XMLHTTPRequest} xhr
- * @param {Object} options
- * @api private
- */
-
-function Response(req) {
-  this.req = req;
-  this.xhr = this.req.xhr;
-  // responseText is accessible only if responseType is '' or 'text' and on older browsers
-  this.text = ((this.req.method !='HEAD' && (this.xhr.responseType === '' || this.xhr.responseType === 'text')) || typeof this.xhr.responseType === 'undefined')
-     ? this.xhr.responseText
-     : null;
-  this.statusText = this.req.xhr.statusText;
-  var status = this.xhr.status;
-  // handle IE9 bug: http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
-  if (status === 1223) {
-      status = 204;
-  }
-  this._setStatusProperties(status);
-  this.header = this.headers = parseHeader(this.xhr.getAllResponseHeaders());
-  // getAllResponseHeaders sometimes falsely returns "" for CORS requests, but
-  // getResponseHeader still works. so we get content-type even if getting
-  // other headers fails.
-  this.header['content-type'] = this.xhr.getResponseHeader('content-type');
-  this._setHeaderProperties(this.header);
-
-  if (null === this.text && req._responseType) {
-    this.body = this.xhr.response;
-  } else {
-    this.body = this.req.method != 'HEAD'
-      ? this._parseBody(this.text ? this.text : this.xhr.response)
-      : null;
-  }
-}
-
-ResponseBase(Response.prototype);
-
-/**
- * Parse the given body `str`.
- *
- * Used for auto-parsing of bodies. Parsers
- * are defined on the `superagent.parse` object.
- *
- * @param {String} str
- * @return {Mixed}
- * @api private
- */
-
-Response.prototype._parseBody = function(str){
-  var parse = request.parse[this.type];
-  if(this.req._parser) {
-    return this.req._parser(this, str);
-  }
-  if (!parse && isJSON(this.type)) {
-    parse = request.parse['application/json'];
-  }
-  return parse && str && (str.length || str instanceof Object)
-    ? parse(str)
-    : null;
-};
-
-/**
- * Return an `Error` representative of this response.
- *
- * @return {Error}
- * @api public
- */
-
-Response.prototype.toError = function(){
-  var req = this.req;
-  var method = req.method;
-  var url = req.url;
-
-  var msg = 'cannot ' + method + ' ' + url + ' (' + this.status + ')';
-  var err = new Error(msg);
-  err.status = this.status;
-  err.method = method;
-  err.url = url;
-
-  return err;
-};
-
-/**
- * Expose `Response`.
- */
-
-request.Response = Response;
-
-/**
- * Initialize a new `Request` with the given `method` and `url`.
- *
- * @param {String} method
- * @param {String} url
- * @api public
- */
-
-function Request(method, url) {
-  var self = this;
-  this._query = this._query || [];
-  this.method = method;
-  this.url = url;
-  this.header = {}; // preserves header name case
-  this._header = {}; // coerces header names to lowercase
-  this.on('end', function(){
-    var err = null;
-    var res = null;
-
-    try {
-      res = new Response(self);
-    } catch(e) {
-      err = new Error('Parser is unable to parse the response');
-      err.parse = true;
-      err.original = e;
-      // issue #675: return the raw response if the response parsing fails
-      if (self.xhr) {
-        // ie9 doesn't have 'response' property
-        err.rawResponse = typeof self.xhr.responseType == 'undefined' ? self.xhr.responseText : self.xhr.response;
-        // issue #876: return the http status code if the response parsing fails
-        err.status = self.xhr.status ? self.xhr.status : null;
-        err.statusCode = err.status; // backwards-compat only
-      } else {
-        err.rawResponse = null;
-        err.status = null;
-      }
-
-      return self.callback(err);
-    }
-
-    self.emit('response', res);
-
-    var new_err;
-    try {
-      if (!self._isResponseOK(res)) {
-        new_err = new Error(res.statusText || 'Unsuccessful HTTP response');
-        new_err.original = err;
-        new_err.response = res;
-        new_err.status = res.status;
-      }
-    } catch(e) {
-      new_err = e; // #985 touching res may cause INVALID_STATE_ERR on old Android
-    }
-
-    // #1000 don't catch errors from the callback to avoid double calling it
-    if (new_err) {
-      self.callback(new_err, res);
-    } else {
-      self.callback(null, res);
-    }
-  });
-}
-
-/**
- * Mixin `Emitter` and `RequestBase`.
- */
-
-Emitter(Request.prototype);
-RequestBase(Request.prototype);
-
-/**
- * Set Content-Type to `type`, mapping values from `request.types`.
- *
- * Examples:
- *
- *      superagent.types.xml = 'application/xml';
- *
- *      request.post('/')
- *        .type('xml')
- *        .send(xmlstring)
- *        .end(callback);
- *
- *      request.post('/')
- *        .type('application/xml')
- *        .send(xmlstring)
- *        .end(callback);
- *
- * @param {String} type
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.type = function(type){
-  this.set('Content-Type', request.types[type] || type);
-  return this;
-};
-
-/**
- * Set Accept to `type`, mapping values from `request.types`.
- *
- * Examples:
- *
- *      superagent.types.json = 'application/json';
- *
- *      request.get('/agent')
- *        .accept('json')
- *        .end(callback);
- *
- *      request.get('/agent')
- *        .accept('application/json')
- *        .end(callback);
- *
- * @param {String} accept
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.accept = function(type){
-  this.set('Accept', request.types[type] || type);
-  return this;
-};
-
-/**
- * Set Authorization field value with `user` and `pass`.
- *
- * @param {String} user
- * @param {String} [pass] optional in case of using 'bearer' as type
- * @param {Object} options with 'type' property 'auto', 'basic' or 'bearer' (default 'basic')
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.auth = function(user, pass, options){
-  if (typeof pass === 'object' && pass !== null) { // pass is optional and can substitute for options
-    options = pass;
-  }
-  if (!options) {
-    options = {
-      type: 'function' === typeof btoa ? 'basic' : 'auto',
-    }
-  }
-
-  switch (options.type) {
-    case 'basic':
-      this.set('Authorization', 'Basic ' + btoa(user + ':' + pass));
-    break;
-
-    case 'auto':
-      this.username = user;
-      this.password = pass;
-    break;
-      
-    case 'bearer': // usage would be .auth(accessToken, { type: 'bearer' })
-      this.set('Authorization', 'Bearer ' + user);
-    break;  
-  }
-  return this;
-};
-
-/**
- * Add query-string `val`.
- *
- * Examples:
- *
- *   request.get('/shoes')
- *     .query('size=10')
- *     .query({ color: 'blue' })
- *
- * @param {Object|String} val
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.query = function(val){
-  if ('string' != typeof val) val = serialize(val);
-  if (val) this._query.push(val);
-  return this;
-};
-
-/**
- * Queue the given `file` as an attachment to the specified `field`,
- * with optional `options` (or filename).
- *
- * ``` js
- * request.post('/upload')
- *   .attach('content', new Blob(['<a id="a"><b id="b">hey!</b></a>'], { type: "text/html"}))
- *   .end(callback);
- * ```
- *
- * @param {String} field
- * @param {Blob|File} file
- * @param {String|Object} options
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.attach = function(field, file, options){
-  if (file) {
-    if (this._data) {
-      throw Error("superagent can't mix .send() and .attach()");
-    }
-
-    this._getFormData().append(field, file, options || file.name);
-  }
-  return this;
-};
-
-Request.prototype._getFormData = function(){
-  if (!this._formData) {
-    this._formData = new root.FormData();
-  }
-  return this._formData;
-};
-
-/**
- * Invoke the callback with `err` and `res`
- * and handle arity check.
- *
- * @param {Error} err
- * @param {Response} res
- * @api private
- */
-
-Request.prototype.callback = function(err, res){
-  // console.log(this._retries, this._maxRetries)
-  if (this._maxRetries && this._retries++ < this._maxRetries && shouldRetry(err, res)) {
-    return this._retry();
-  }
-
-  var fn = this._callback;
-  this.clearTimeout();
-
-  if (err) {
-    if (this._maxRetries) err.retries = this._retries - 1;
-    this.emit('error', err);
-  }
-
-  fn(err, res);
-};
-
-/**
- * Invoke callback with x-domain error.
- *
- * @api private
- */
-
-Request.prototype.crossDomainError = function(){
-  var err = new Error('Request has been terminated\nPossible causes: the network is offline, Origin is not allowed by Access-Control-Allow-Origin, the page is being unloaded, etc.');
-  err.crossDomain = true;
-
-  err.status = this.status;
-  err.method = this.method;
-  err.url = this.url;
-
-  this.callback(err);
-};
-
-// This only warns, because the request is still likely to work
-Request.prototype.buffer = Request.prototype.ca = Request.prototype.agent = function(){
-  console.warn("This is not supported in browser version of superagent");
-  return this;
-};
-
-// This throws, because it can't send/receive data as expected
-Request.prototype.pipe = Request.prototype.write = function(){
-  throw Error("Streaming is not supported in browser version of superagent");
-};
-
-/**
- * Compose querystring to append to req.url
- *
- * @api private
- */
-
-Request.prototype._appendQueryString = function(){
-  var query = this._query.join('&');
-  if (query) {
-    this.url += (this.url.indexOf('?') >= 0 ? '&' : '?') + query;
-  }
-
-  if (this._sort) {
-    var index = this.url.indexOf('?');
-    if (index >= 0) {
-      var queryArr = this.url.substring(index + 1).split('&');
-      if (isFunction(this._sort)) {
-        queryArr.sort(this._sort);
-      } else {
-        queryArr.sort();
-      }
-      this.url = this.url.substring(0, index) + '?' + queryArr.join('&');
-    }
-  }
-};
-
-/**
- * Check if `obj` is a host object,
- * we don't want to serialize these :)
- *
- * @param {Object} obj
- * @return {Boolean}
- * @api private
- */
-Request.prototype._isHost = function _isHost(obj) {
-  // Native objects stringify to [object File], [object Blob], [object FormData], etc.
-  return obj && 'object' === typeof obj && !Array.isArray(obj) && Object.prototype.toString.call(obj) !== '[object Object]';
-}
-
-/**
- * Initiate request, invoking callback `fn(res)`
- * with an instanceof `Response`.
- *
- * @param {Function} fn
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.end = function(fn){
-  if (this._endCalled) {
-    console.warn("Warning: .end() was called twice. This is not supported in superagent");
-  }
-  this._endCalled = true;
-
-  // store callback
-  this._callback = fn || noop;
-
-  // querystring
-  this._appendQueryString();
-
-  return this._end();
-};
-
-Request.prototype._end = function() {
-  var self = this;
-  var xhr = this.xhr = request.getXHR();
-  var data = this._formData || this._data;
-
-  this._setTimeouts();
-
-  // state change
-  xhr.onreadystatechange = function(){
-    var readyState = xhr.readyState;
-    if (readyState >= 2 && self._responseTimeoutTimer) {
-      clearTimeout(self._responseTimeoutTimer);
-    }
-    if (4 != readyState) {
-      return;
-    }
-
-    // In IE9, reads to any property (e.g. status) off of an aborted XHR will
-    // result in the error "Could not complete the operation due to error c00c023f"
-    var status;
-    try { status = xhr.status } catch(e) { status = 0; }
-
-    if (!status) {
-      if (self.timedout || self._aborted) return;
-      return self.crossDomainError();
-    }
-    self.emit('end');
-  };
-
-  // progress
-  var handleProgress = function(direction, e) {
-    if (e.total > 0) {
-      e.percent = e.loaded / e.total * 100;
-    }
-    e.direction = direction;
-    self.emit('progress', e);
-  }
-  if (this.hasListeners('progress')) {
-    try {
-      xhr.onprogress = handleProgress.bind(null, 'download');
-      if (xhr.upload) {
-        xhr.upload.onprogress = handleProgress.bind(null, 'upload');
-      }
-    } catch(e) {
-      // Accessing xhr.upload fails in IE from a web worker, so just pretend it doesn't exist.
-      // Reported here:
-      // https://connect.microsoft.com/IE/feedback/details/837245/xmlhttprequest-upload-throws-invalid-argument-when-used-from-web-worker-context
-    }
-  }
-
-  // initiate request
-  try {
-    if (this.username && this.password) {
-      xhr.open(this.method, this.url, true, this.username, this.password);
-    } else {
-      xhr.open(this.method, this.url, true);
-    }
-  } catch (err) {
-    // see #1149
-    return this.callback(err);
-  }
-
-  // CORS
-  if (this._withCredentials) xhr.withCredentials = true;
-
-  // body
-  if (!this._formData && 'GET' != this.method && 'HEAD' != this.method && 'string' != typeof data && !this._isHost(data)) {
-    // serialize stuff
-    var contentType = this._header['content-type'];
-    var serialize = this._serializer || request.serialize[contentType ? contentType.split(';')[0] : ''];
-    if (!serialize && isJSON(contentType)) {
-      serialize = request.serialize['application/json'];
-    }
-    if (serialize) data = serialize(data);
-  }
-
-  // set header fields
-  for (var field in this.header) {
-    if (null == this.header[field]) continue;
-
-    if (this.header.hasOwnProperty(field))
-      xhr.setRequestHeader(field, this.header[field]);
-  }
-
-  if (this._responseType) {
-    xhr.responseType = this._responseType;
-  }
-
-  // send stuff
-  this.emit('request', this);
-
-  // IE11 xhr.send(undefined) sends 'undefined' string as POST payload (instead of nothing)
-  // We need null here if data is undefined
-  xhr.send(typeof data !== 'undefined' ? data : null);
-  return this;
-};
-
-/**
- * GET `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.get = function(url, data, fn){
-  var req = request('GET', url);
-  if ('function' == typeof data) fn = data, data = null;
-  if (data) req.query(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * HEAD `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.head = function(url, data, fn){
-  var req = request('HEAD', url);
-  if ('function' == typeof data) fn = data, data = null;
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * OPTIONS query to `url` with optional callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.options = function(url, data, fn){
-  var req = request('OPTIONS', url);
-  if ('function' == typeof data) fn = data, data = null;
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * DELETE `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-function del(url, data, fn){
-  var req = request('DELETE', url);
-  if ('function' == typeof data) fn = data, data = null;
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-request['del'] = del;
-request['delete'] = del;
-
-/**
- * PATCH `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.patch = function(url, data, fn){
-  var req = request('PATCH', url);
-  if ('function' == typeof data) fn = data, data = null;
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * POST `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed} [data]
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.post = function(url, data, fn){
-  var req = request('POST', url);
-  if ('function' == typeof data) fn = data, data = null;
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-/**
- * PUT `url` with optional `data` and callback `fn(res)`.
- *
- * @param {String} url
- * @param {Mixed|Function} [data] or fn
- * @param {Function} [fn]
- * @return {Request}
- * @api public
- */
-
-request.put = function(url, data, fn){
-  var req = request('PUT', url);
-  if ('function' == typeof data) fn = data, data = null;
-  if (data) req.send(data);
-  if (fn) req.end(fn);
-  return req;
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function group(prediction, options) {
-    if (options.group) {
-        prediction.sort((a, b) => {
-            if (a.diaIDs[0] < b.diaIDs[0]) return -1;
-            if (a.diaIDs[0] > b.diaIDs[0]) return 1;
-            return 0;
-        });
-        var i, k;
-        for (i = prediction.length - 2; i >= 0; i--) {
-            if (prediction[i].diaIDs[0] === prediction[i + 1].diaIDs[0]) {
-                prediction[i].integral += prediction[i + 1].integral;
-                prediction[i].atomIDs = prediction[i].atomIDs.concat(prediction[i + 1].atomIDs);
-                prediction.splice(i + 1, 1);
-            }
-        }
-
-        for (i = 0; i < prediction.length; i++) {
-            var j = prediction[i].j;
-            if (j && j.length > 0) {
-                j.sort((a, b) => {
-                    return a.diaID.localeCompare(b.diaID);
-                });
-                //It is supposed that multiplicity is always `d`
-                //Remove the assignment because it is not correct anymore
-                delete j[j.length - 1].assignment;
-                for (k = j.length - 2; k >= 0; k--) {
-                    delete j[k].assignment;
-                    if (j[k].diaID === j[k + 1].diaID && j[k].coupling === j[k + 1].coupling) {
-                        j[k].multiplicity += j[k + 1].multiplicity;
-                        //j[k].assignment += ',' + j[k + 1].assignment;
-                        j.splice(k + 1, 1);
-                    }
-                }
-            }
-        }
-    }
-    return prediction;
-};
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
 module.exports = abstractMatrix;
 
-var LuDecomposition = __webpack_require__(10);
-var SvDecomposition = __webpack_require__(11);
-var arrayUtils = __webpack_require__(24);
+var LuDecomposition = __webpack_require__(8);
+var SvDecomposition = __webpack_require__(9);
+var arrayUtils = __webpack_require__(21);
 var util = __webpack_require__(2);
-var MatrixTransposeView = __webpack_require__(38);
-var MatrixRowView = __webpack_require__(35);
-var MatrixSubView = __webpack_require__(37);
-var MatrixSelectionView = __webpack_require__(36);
-var MatrixColumnView = __webpack_require__(32);
-var MatrixFlipRowView = __webpack_require__(34);
-var MatrixFlipColumnView = __webpack_require__(33);
+var MatrixTransposeView = __webpack_require__(35);
+var MatrixRowView = __webpack_require__(32);
+var MatrixSubView = __webpack_require__(34);
+var MatrixSelectionView = __webpack_require__(33);
+var MatrixColumnView = __webpack_require__(29);
+var MatrixFlipRowView = __webpack_require__(31);
+var MatrixFlipColumnView = __webpack_require__(30);
 
 function abstractMatrix(superCtor) {
     if (superCtor === undefined) superCtor = Object;
@@ -3341,7 +2355,7 @@ function abstractMatrix(superCtor) {
 
 
 /***/ }),
-/* 10 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3522,14 +2536,14 @@ module.exports = LuDecomposition;
 
 
 /***/ }),
-/* 11 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var Matrix = __webpack_require__(0);
-var util = __webpack_require__(4);
+var util = __webpack_require__(3);
 var hypotenuse = util.hypotenuse;
 var getFilled2DArray = util.getFilled2DArray;
 
@@ -4043,18 +3057,18 @@ module.exports = SingularValueDecomposition;
 
 
 /***/ }),
-/* 12 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 module.exports = __webpack_require__(0).Matrix;
-module.exports.Decompositions = module.exports.DC = __webpack_require__(30);
+module.exports.Decompositions = module.exports.DC = __webpack_require__(27);
 
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4540,18 +3554,18 @@ exports.cumulativeSum = function cumulativeSum(array) {
 
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.array = __webpack_require__(13);
-exports.matrix = __webpack_require__(39);
+exports.array = __webpack_require__(11);
+exports.matrix = __webpack_require__(36);
 
 
 /***/ }),
-/* 15 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4602,7 +3616,7 @@ module.exports = function extend(OCL) {
 };
 
 /***/ }),
-/* 16 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -4795,388 +3809,962 @@ module.exports = function extend(OCL) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(65)))
 
 /***/ }),
-/* 17 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var OCLE = __webpack_require__(59);
-
-var group = __webpack_require__(8);
-
-module.exports = function queryByHose(molecule, db, options) {
-    //molecule.addImplicitHydrogens();
-    var atomLabel = options.atomLabel || 'H';
-    var use = options.use;
-    var algorithm = options.algorithm || 0;
-    var levels = options.hoseLevels || [6, 5, 4, 3, 2];
-
-    levels.sort(function (a, b) {
-        return b - a;
-    });
-    var diaIDs = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel });
-    var infoCOSY = [];
-
-    var atoms = {};
-    var atomNumbers = [];
-    var i, k, j, atom, hosesString;
-    for (j = diaIDs.length - 1; j >= 0; j--) {
-        hosesString = OCLE.Util.getHoseCodesFromDiastereotopicID(diaIDs[j].oclID, {
-            maxSphereSize: levels[0],
-            type: algorithm
-        });
-        atom = {
-            diaIDs: [diaIDs[j].oclID + '']
-        };
-        for (k = 0; k < levels.length; k++) {
-            if (hosesString[levels[k] - 1]) {
-                atom['hose' + levels[k]] = hosesString[levels[k] - 1] + '';
-            }
-        }
-        for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
-            atoms[diaIDs[j].atoms[k]] = JSON.parse(JSON.stringify(atom));
-            atomNumbers.push(diaIDs[j].atoms[k]);
-        }
-    }
-    //Now, we twoD the chimical shift by using our copy of NMRShiftDB
-    //var script2 = 'select chemicalShift FROM assignment where ';//hose5='dgH`EBYReZYiIjjjjj@OzP`NET'';
-    var toReturn = new Array(atomNumbers.length);
-    for (j = 0; j < atomNumbers.length; j++) {
-        atom = atoms[atomNumbers[j]];
-        var res = null;
-        k = 0;
-        //A really simple query
-        while (!res && k < levels.length) {
-            if (db[levels[k]]) {
-                res = db[levels[k]][atom['hose' + levels[k]]];
-            }
-            k++;
-        }
-        if (!res) {
-            res = { cs: null, ncs: 0, std: 0, min: 0, max: 0 }; //Default values
-        }
-        atom.atomLabel = atomLabel;
-        atom.level = levels[k - 1];
-        atom.delta = res.cs;
-        if (use === 'median' && res.median) {
-            atom.delta = res.median;
-        } else if (use === 'mean' && res.mean) {
-            atom.delta = res.mean;
-        }
-        atom.integral = 1;
-        atom.atomIDs = ['' + atomNumbers[j]];
-        atom.ncs = res.ncs;
-        atom.std = res.std;
-        atom.min = res.min;
-        atom.max = res.max;
-        atom.j = [];
-
-        //Add the predicted couplings
-        //console.log(atomNumbers[j]+' '+infoCOSY[0].atom1);
-        for (i = infoCOSY.length - 1; i >= 0; i--) {
-            if (infoCOSY[i].atom1 - 1 === atomNumbers[j] && infoCOSY[i].coupling > 2) {
-                atom.j.push({
-                    'assignment': infoCOSY[i].atom2 - 1 + '', //Put the diaID instead
-                    'diaID': infoCOSY[i].diaID2,
-                    'coupling': infoCOSY[i].coupling,
-                    'multiplicity': 'd'
-                });
-            }
-        }
-        toReturn[j] = atom;
-    }
-    //TODO this will not work because getPaths is not implemented yet!!!!
-    if (options.ignoreLabile) {
-        var linksOH = molecule.getAllPaths({
-            fromLabel: 'H',
-            toLabel: 'O',
-            minLength: 1,
-            maxLength: 1
-        });
-        var linksNH = molecule.getAllPaths({
-            fromLabel: 'H',
-            toLabel: 'N',
-            minLength: 1,
-            maxLength: 1
-        });
-        for (j = toReturn.length - 1; j >= 0; j--) {
-            for (k = 0; k < linksOH.length; k++) {
-                if (toReturn[j].diaIDs[0] === linksOH[k].fromDiaID) {
-                    toReturn.splice(j, 1);
-                    break;
-                }
-            }
-        }
-
-        for (j = toReturn.length - 1; j >= 0; j--) {
-            for (k = 0; k < linksNH.length; k++) {
-                if (toReturn[j].diaIDs[0] === linksNH[k].fromDiaID) {
-                    toReturn.splice(j, 1);
-                    break;
-                }
-            }
-        }
-    }
-    return group(toReturn, options);
-};
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var newArray = __webpack_require__(40);
-var superagent = __webpack_require__(7);
-
-var group = __webpack_require__(8);
-var normalizeOptions = __webpack_require__(3);
 
 /**
- * Makes a prediction using spinus
- * @param {string|Molecule} molecule
- * @param {object} [options]
- * @return {Promise<Array>}
+ * Root reference for iframes.
  */
-module.exports = function spinus(molecule, options) {
-    var _normalizeOptions = normalizeOptions(molecule, options);
 
-    var _normalizeOptions2 = _slicedToArray(_normalizeOptions, 2);
+var root;
+if (typeof window !== 'undefined') { // Browser window
+  root = window;
+} else if (typeof self !== 'undefined') { // Web Worker
+  root = self;
+} else { // Other environments
+  console.warn("Using browser-only version of superagent in non-browser environment");
+  root = this;
+}
 
-    molecule = _normalizeOptions2[0];
-    options = _normalizeOptions2[1];
+var Emitter = __webpack_require__(18);
+var RequestBase = __webpack_require__(70);
+var isObject = __webpack_require__(5);
+var isFunction = __webpack_require__(69);
+var ResponseBase = __webpack_require__(71);
+var shouldRetry = __webpack_require__(72);
 
-    return fromSpinus(molecule).then(prediction => group(prediction, options));
+/**
+ * Noop.
+ */
+
+function noop(){};
+
+/**
+ * Expose `request`.
+ */
+
+var request = exports = module.exports = function(method, url) {
+  // callback
+  if ('function' == typeof url) {
+    return new exports.Request('GET', method).end(url);
+  }
+
+  // url first
+  if (1 == arguments.length) {
+    return new exports.Request('GET', method);
+  }
+
+  return new exports.Request(method, url);
+}
+
+exports.Request = Request;
+
+/**
+ * Determine XHR.
+ */
+
+request.getXHR = function () {
+  if (root.XMLHttpRequest
+      && (!root.location || 'file:' != root.location.protocol
+          || !root.ActiveXObject)) {
+    return new XMLHttpRequest;
+  } else {
+    try { return new ActiveXObject('Microsoft.XMLHTTP'); } catch(e) {}
+    try { return new ActiveXObject('Msxml2.XMLHTTP.6.0'); } catch(e) {}
+    try { return new ActiveXObject('Msxml2.XMLHTTP.3.0'); } catch(e) {}
+    try { return new ActiveXObject('Msxml2.XMLHTTP'); } catch(e) {}
+  }
+  throw Error("Browser-only verison of superagent could not find XHR");
 };
 
-function fromSpinus(molecule) {
-    var request = superagent.post('https://www.nmrdb.org/service/predictor');
-    request.field('molfile', molecule.toMolfile());
+/**
+ * Removes leading and trailing whitespace, added to support IE.
+ *
+ * @param {String} s
+ * @return {String}
+ * @api private
+ */
 
-    return request.then(response => {
-        //Convert to the ranges format and include the diaID for each atomID
-        var data = spinusParser(response.text);
-        var ids = data.ids;
-        var jc = data.couplingConstants;
-        var cs = data.chemicalShifts;
-        var multiplicity = data.multiplicity;
-        var integrals = data.integrals;
+var trim = ''.trim
+  ? function(s) { return s.trim(); }
+  : function(s) { return s.replace(/(^\s*|\s*$)/g, ''); };
 
-        var nspins = cs.length;
+/**
+ * Serialize the given `obj`.
+ *
+ * @param {Object} obj
+ * @return {String}
+ * @api private
+ */
 
-        var diaIDs = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel: 'H' });
-        var result = new Array(nspins);
-        var atoms = {};
-        var atomNumbers = [];
-        var i, j, k, oclID, tmpCS;
-        var csByOclID = {};
-        for (j = diaIDs.length - 1; j >= 0; j--) {
-            oclID = diaIDs[j].oclID + '';
-            for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
-                atoms[diaIDs[j].atoms[k]] = oclID;
-                atomNumbers.push(diaIDs[j].atoms[k]);
-                if (!csByOclID[oclID]) {
-                    csByOclID[oclID] = { nc: 1, cs: cs[ids[diaIDs[j].atoms[k]]] };
-                } else {
-                    csByOclID[oclID].nc++;
-                    csByOclID[oclID].cs += cs[ids[diaIDs[j].atoms[k]]];
-                }
-            }
-        }
-
-        //Average the entries for the equivalent protons
-        var idsKeys = Object.keys(ids);
-        for (i = 0; i < nspins; i++) {
-            tmpCS = csByOclID[atoms[idsKeys[i]]].cs / csByOclID[atoms[idsKeys[i]]].nc;
-            result[i] = {
-                atomIDs: [idsKeys[i]],
-                diaIDs: [atoms[idsKeys[i]]],
-                integral: integrals[i],
-                delta: tmpCS,
-                atomLabel: 'H',
-                j: []
-            };
-
-            for (j = 0; j < nspins; j++) {
-                //Do not consider coupling constant between diasterotopic atoms
-                if (atoms[idsKeys[j]] !== result[i].diaIDs[0] && jc[i][j] !== 0) {
-                    result[i].j.push({
-                        assignment: idsKeys[j],
-                        diaID: atoms[idsKeys[j]],
-                        coupling: jc[i][j],
-                        multiplicity: multiplicityToString(multiplicity[j])
-                    });
-                }
-            }
-
-            if (result[i].j.length === 0) {
-                result[i].multiplicity = 's';
-            }
-        }
-
-        return result;
-    });
+function serialize(obj) {
+  if (!isObject(obj)) return obj;
+  var pairs = [];
+  for (var key in obj) {
+    pushEncodedKeyValuePair(pairs, key, obj[key]);
+  }
+  return pairs.join('&');
 }
 
-function spinusParser(result) {
-    var lines = result.split('\n');
-    var nspins = lines.length - 1;
-    var cs = new Array(nspins);
-    var integrals = new Array(nspins);
-    var ids = {};
-    var jc = new Array(nspins);
-    var i, j;
+/**
+ * Helps 'serialize' with serializing arrays.
+ * Mutates the pairs array.
+ *
+ * @param {Array} pairs
+ * @param {String} key
+ * @param {Mixed} val
+ */
 
-    for (i = 0; i < nspins; i++) {
-        jc[i] = newArray(nspins, 0);
-        var tokens = lines[i].split('\t');
-        cs[i] = +tokens[2];
-        ids[tokens[0] - 1] = i;
-        integrals[i] = 1; //+tokens[5];//Is it always 1??
+function pushEncodedKeyValuePair(pairs, key, val) {
+  if (val != null) {
+    if (Array.isArray(val)) {
+      val.forEach(function(v) {
+        pushEncodedKeyValuePair(pairs, key, v);
+      });
+    } else if (isObject(val)) {
+      for(var subkey in val) {
+        pushEncodedKeyValuePair(pairs, key + '[' + subkey + ']', val[subkey]);
+      }
+    } else {
+      pairs.push(encodeURIComponent(key)
+        + '=' + encodeURIComponent(val));
     }
-
-    for (i = 0; i < nspins; i++) {
-        tokens = lines[i].split('\t');
-        var nCoup = (tokens.length - 4) / 3;
-        for (j = 0; j < nCoup; j++) {
-            var withID = tokens[4 + 3 * j] - 1;
-            var idx = ids[withID];
-            jc[i][idx] = +tokens[6 + 3 * j];
-        }
-    }
-
-    for (j = 0; j < nspins; j++) {
-        for (i = j; i < nspins; i++) {
-            jc[j][i] = jc[i][j];
-        }
-    }
-
-    return {
-        ids,
-        chemicalShifts: cs,
-        integrals,
-        couplingConstants: jc,
-        multiplicity: newArray(nspins, 2)
-    };
+  } else if (val === null) {
+    pairs.push(encodeURIComponent(key));
+  }
 }
 
-function multiplicityToString(mul) {
-    switch (mul) {
-        case 2:
-            return 'd';
-        case 3:
-            return 't';
-        case 4:
-            return 'q';
-        default:
-            return '';
+/**
+ * Expose serialization method.
+ */
+
+ request.serializeObject = serialize;
+
+ /**
+  * Parse the given x-www-form-urlencoded `str`.
+  *
+  * @param {String} str
+  * @return {Object}
+  * @api private
+  */
+
+function parseString(str) {
+  var obj = {};
+  var pairs = str.split('&');
+  var pair;
+  var pos;
+
+  for (var i = 0, len = pairs.length; i < len; ++i) {
+    pair = pairs[i];
+    pos = pair.indexOf('=');
+    if (pos == -1) {
+      obj[decodeURIComponent(pair)] = '';
+    } else {
+      obj[decodeURIComponent(pair.slice(0, pos))] =
+        decodeURIComponent(pair.slice(pos + 1));
     }
+  }
+
+  return obj;
 }
+
+/**
+ * Expose parser.
+ */
+
+request.parseString = parseString;
+
+/**
+ * Default MIME type map.
+ *
+ *     superagent.types.xml = 'application/xml';
+ *
+ */
+
+request.types = {
+  html: 'text/html',
+  json: 'application/json',
+  xml: 'application/xml',
+  urlencoded: 'application/x-www-form-urlencoded',
+  'form': 'application/x-www-form-urlencoded',
+  'form-data': 'application/x-www-form-urlencoded'
+};
+
+/**
+ * Default serialization map.
+ *
+ *     superagent.serialize['application/xml'] = function(obj){
+ *       return 'generated xml here';
+ *     };
+ *
+ */
+
+ request.serialize = {
+   'application/x-www-form-urlencoded': serialize,
+   'application/json': JSON.stringify
+ };
+
+ /**
+  * Default parsers.
+  *
+  *     superagent.parse['application/xml'] = function(str){
+  *       return { object parsed from str };
+  *     };
+  *
+  */
+
+request.parse = {
+  'application/x-www-form-urlencoded': parseString,
+  'application/json': JSON.parse
+};
+
+/**
+ * Parse the given header `str` into
+ * an object containing the mapped fields.
+ *
+ * @param {String} str
+ * @return {Object}
+ * @api private
+ */
+
+function parseHeader(str) {
+  var lines = str.split(/\r?\n/);
+  var fields = {};
+  var index;
+  var line;
+  var field;
+  var val;
+
+  lines.pop(); // trailing CRLF
+
+  for (var i = 0, len = lines.length; i < len; ++i) {
+    line = lines[i];
+    index = line.indexOf(':');
+    field = line.slice(0, index).toLowerCase();
+    val = trim(line.slice(index + 1));
+    fields[field] = val;
+  }
+
+  return fields;
+}
+
+/**
+ * Check if `mime` is json or has +json structured syntax suffix.
+ *
+ * @param {String} mime
+ * @return {Boolean}
+ * @api private
+ */
+
+function isJSON(mime) {
+  return /[\/+]json\b/.test(mime);
+}
+
+/**
+ * Initialize a new `Response` with the given `xhr`.
+ *
+ *  - set flags (.ok, .error, etc)
+ *  - parse header
+ *
+ * Examples:
+ *
+ *  Aliasing `superagent` as `request` is nice:
+ *
+ *      request = superagent;
+ *
+ *  We can use the promise-like API, or pass callbacks:
+ *
+ *      request.get('/').end(function(res){});
+ *      request.get('/', function(res){});
+ *
+ *  Sending data can be chained:
+ *
+ *      request
+ *        .post('/user')
+ *        .send({ name: 'tj' })
+ *        .end(function(res){});
+ *
+ *  Or passed to `.send()`:
+ *
+ *      request
+ *        .post('/user')
+ *        .send({ name: 'tj' }, function(res){});
+ *
+ *  Or passed to `.post()`:
+ *
+ *      request
+ *        .post('/user', { name: 'tj' })
+ *        .end(function(res){});
+ *
+ * Or further reduced to a single call for simple cases:
+ *
+ *      request
+ *        .post('/user', { name: 'tj' }, function(res){});
+ *
+ * @param {XMLHTTPRequest} xhr
+ * @param {Object} options
+ * @api private
+ */
+
+function Response(req) {
+  this.req = req;
+  this.xhr = this.req.xhr;
+  // responseText is accessible only if responseType is '' or 'text' and on older browsers
+  this.text = ((this.req.method !='HEAD' && (this.xhr.responseType === '' || this.xhr.responseType === 'text')) || typeof this.xhr.responseType === 'undefined')
+     ? this.xhr.responseText
+     : null;
+  this.statusText = this.req.xhr.statusText;
+  var status = this.xhr.status;
+  // handle IE9 bug: http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+  if (status === 1223) {
+      status = 204;
+  }
+  this._setStatusProperties(status);
+  this.header = this.headers = parseHeader(this.xhr.getAllResponseHeaders());
+  // getAllResponseHeaders sometimes falsely returns "" for CORS requests, but
+  // getResponseHeader still works. so we get content-type even if getting
+  // other headers fails.
+  this.header['content-type'] = this.xhr.getResponseHeader('content-type');
+  this._setHeaderProperties(this.header);
+
+  if (null === this.text && req._responseType) {
+    this.body = this.xhr.response;
+  } else {
+    this.body = this.req.method != 'HEAD'
+      ? this._parseBody(this.text ? this.text : this.xhr.response)
+      : null;
+  }
+}
+
+ResponseBase(Response.prototype);
+
+/**
+ * Parse the given body `str`.
+ *
+ * Used for auto-parsing of bodies. Parsers
+ * are defined on the `superagent.parse` object.
+ *
+ * @param {String} str
+ * @return {Mixed}
+ * @api private
+ */
+
+Response.prototype._parseBody = function(str){
+  var parse = request.parse[this.type];
+  if(this.req._parser) {
+    return this.req._parser(this, str);
+  }
+  if (!parse && isJSON(this.type)) {
+    parse = request.parse['application/json'];
+  }
+  return parse && str && (str.length || str instanceof Object)
+    ? parse(str)
+    : null;
+};
+
+/**
+ * Return an `Error` representative of this response.
+ *
+ * @return {Error}
+ * @api public
+ */
+
+Response.prototype.toError = function(){
+  var req = this.req;
+  var method = req.method;
+  var url = req.url;
+
+  var msg = 'cannot ' + method + ' ' + url + ' (' + this.status + ')';
+  var err = new Error(msg);
+  err.status = this.status;
+  err.method = method;
+  err.url = url;
+
+  return err;
+};
+
+/**
+ * Expose `Response`.
+ */
+
+request.Response = Response;
+
+/**
+ * Initialize a new `Request` with the given `method` and `url`.
+ *
+ * @param {String} method
+ * @param {String} url
+ * @api public
+ */
+
+function Request(method, url) {
+  var self = this;
+  this._query = this._query || [];
+  this.method = method;
+  this.url = url;
+  this.header = {}; // preserves header name case
+  this._header = {}; // coerces header names to lowercase
+  this.on('end', function(){
+    var err = null;
+    var res = null;
+
+    try {
+      res = new Response(self);
+    } catch(e) {
+      err = new Error('Parser is unable to parse the response');
+      err.parse = true;
+      err.original = e;
+      // issue #675: return the raw response if the response parsing fails
+      if (self.xhr) {
+        // ie9 doesn't have 'response' property
+        err.rawResponse = typeof self.xhr.responseType == 'undefined' ? self.xhr.responseText : self.xhr.response;
+        // issue #876: return the http status code if the response parsing fails
+        err.status = self.xhr.status ? self.xhr.status : null;
+        err.statusCode = err.status; // backwards-compat only
+      } else {
+        err.rawResponse = null;
+        err.status = null;
+      }
+
+      return self.callback(err);
+    }
+
+    self.emit('response', res);
+
+    var new_err;
+    try {
+      if (!self._isResponseOK(res)) {
+        new_err = new Error(res.statusText || 'Unsuccessful HTTP response');
+        new_err.original = err;
+        new_err.response = res;
+        new_err.status = res.status;
+      }
+    } catch(e) {
+      new_err = e; // #985 touching res may cause INVALID_STATE_ERR on old Android
+    }
+
+    // #1000 don't catch errors from the callback to avoid double calling it
+    if (new_err) {
+      self.callback(new_err, res);
+    } else {
+      self.callback(null, res);
+    }
+  });
+}
+
+/**
+ * Mixin `Emitter` and `RequestBase`.
+ */
+
+Emitter(Request.prototype);
+RequestBase(Request.prototype);
+
+/**
+ * Set Content-Type to `type`, mapping values from `request.types`.
+ *
+ * Examples:
+ *
+ *      superagent.types.xml = 'application/xml';
+ *
+ *      request.post('/')
+ *        .type('xml')
+ *        .send(xmlstring)
+ *        .end(callback);
+ *
+ *      request.post('/')
+ *        .type('application/xml')
+ *        .send(xmlstring)
+ *        .end(callback);
+ *
+ * @param {String} type
+ * @return {Request} for chaining
+ * @api public
+ */
+
+Request.prototype.type = function(type){
+  this.set('Content-Type', request.types[type] || type);
+  return this;
+};
+
+/**
+ * Set Accept to `type`, mapping values from `request.types`.
+ *
+ * Examples:
+ *
+ *      superagent.types.json = 'application/json';
+ *
+ *      request.get('/agent')
+ *        .accept('json')
+ *        .end(callback);
+ *
+ *      request.get('/agent')
+ *        .accept('application/json')
+ *        .end(callback);
+ *
+ * @param {String} accept
+ * @return {Request} for chaining
+ * @api public
+ */
+
+Request.prototype.accept = function(type){
+  this.set('Accept', request.types[type] || type);
+  return this;
+};
+
+/**
+ * Set Authorization field value with `user` and `pass`.
+ *
+ * @param {String} user
+ * @param {String} [pass] optional in case of using 'bearer' as type
+ * @param {Object} options with 'type' property 'auto', 'basic' or 'bearer' (default 'basic')
+ * @return {Request} for chaining
+ * @api public
+ */
+
+Request.prototype.auth = function(user, pass, options){
+  if (typeof pass === 'object' && pass !== null) { // pass is optional and can substitute for options
+    options = pass;
+  }
+  if (!options) {
+    options = {
+      type: 'function' === typeof btoa ? 'basic' : 'auto',
+    }
+  }
+
+  switch (options.type) {
+    case 'basic':
+      this.set('Authorization', 'Basic ' + btoa(user + ':' + pass));
+    break;
+
+    case 'auto':
+      this.username = user;
+      this.password = pass;
+    break;
+      
+    case 'bearer': // usage would be .auth(accessToken, { type: 'bearer' })
+      this.set('Authorization', 'Bearer ' + user);
+    break;  
+  }
+  return this;
+};
+
+/**
+ * Add query-string `val`.
+ *
+ * Examples:
+ *
+ *   request.get('/shoes')
+ *     .query('size=10')
+ *     .query({ color: 'blue' })
+ *
+ * @param {Object|String} val
+ * @return {Request} for chaining
+ * @api public
+ */
+
+Request.prototype.query = function(val){
+  if ('string' != typeof val) val = serialize(val);
+  if (val) this._query.push(val);
+  return this;
+};
+
+/**
+ * Queue the given `file` as an attachment to the specified `field`,
+ * with optional `options` (or filename).
+ *
+ * ``` js
+ * request.post('/upload')
+ *   .attach('content', new Blob(['<a id="a"><b id="b">hey!</b></a>'], { type: "text/html"}))
+ *   .end(callback);
+ * ```
+ *
+ * @param {String} field
+ * @param {Blob|File} file
+ * @param {String|Object} options
+ * @return {Request} for chaining
+ * @api public
+ */
+
+Request.prototype.attach = function(field, file, options){
+  if (file) {
+    if (this._data) {
+      throw Error("superagent can't mix .send() and .attach()");
+    }
+
+    this._getFormData().append(field, file, options || file.name);
+  }
+  return this;
+};
+
+Request.prototype._getFormData = function(){
+  if (!this._formData) {
+    this._formData = new root.FormData();
+  }
+  return this._formData;
+};
+
+/**
+ * Invoke the callback with `err` and `res`
+ * and handle arity check.
+ *
+ * @param {Error} err
+ * @param {Response} res
+ * @api private
+ */
+
+Request.prototype.callback = function(err, res){
+  // console.log(this._retries, this._maxRetries)
+  if (this._maxRetries && this._retries++ < this._maxRetries && shouldRetry(err, res)) {
+    return this._retry();
+  }
+
+  var fn = this._callback;
+  this.clearTimeout();
+
+  if (err) {
+    if (this._maxRetries) err.retries = this._retries - 1;
+    this.emit('error', err);
+  }
+
+  fn(err, res);
+};
+
+/**
+ * Invoke callback with x-domain error.
+ *
+ * @api private
+ */
+
+Request.prototype.crossDomainError = function(){
+  var err = new Error('Request has been terminated\nPossible causes: the network is offline, Origin is not allowed by Access-Control-Allow-Origin, the page is being unloaded, etc.');
+  err.crossDomain = true;
+
+  err.status = this.status;
+  err.method = this.method;
+  err.url = this.url;
+
+  this.callback(err);
+};
+
+// This only warns, because the request is still likely to work
+Request.prototype.buffer = Request.prototype.ca = Request.prototype.agent = function(){
+  console.warn("This is not supported in browser version of superagent");
+  return this;
+};
+
+// This throws, because it can't send/receive data as expected
+Request.prototype.pipe = Request.prototype.write = function(){
+  throw Error("Streaming is not supported in browser version of superagent");
+};
+
+/**
+ * Compose querystring to append to req.url
+ *
+ * @api private
+ */
+
+Request.prototype._appendQueryString = function(){
+  var query = this._query.join('&');
+  if (query) {
+    this.url += (this.url.indexOf('?') >= 0 ? '&' : '?') + query;
+  }
+
+  if (this._sort) {
+    var index = this.url.indexOf('?');
+    if (index >= 0) {
+      var queryArr = this.url.substring(index + 1).split('&');
+      if (isFunction(this._sort)) {
+        queryArr.sort(this._sort);
+      } else {
+        queryArr.sort();
+      }
+      this.url = this.url.substring(0, index) + '?' + queryArr.join('&');
+    }
+  }
+};
+
+/**
+ * Check if `obj` is a host object,
+ * we don't want to serialize these :)
+ *
+ * @param {Object} obj
+ * @return {Boolean}
+ * @api private
+ */
+Request.prototype._isHost = function _isHost(obj) {
+  // Native objects stringify to [object File], [object Blob], [object FormData], etc.
+  return obj && 'object' === typeof obj && !Array.isArray(obj) && Object.prototype.toString.call(obj) !== '[object Object]';
+}
+
+/**
+ * Initiate request, invoking callback `fn(res)`
+ * with an instanceof `Response`.
+ *
+ * @param {Function} fn
+ * @return {Request} for chaining
+ * @api public
+ */
+
+Request.prototype.end = function(fn){
+  if (this._endCalled) {
+    console.warn("Warning: .end() was called twice. This is not supported in superagent");
+  }
+  this._endCalled = true;
+
+  // store callback
+  this._callback = fn || noop;
+
+  // querystring
+  this._appendQueryString();
+
+  return this._end();
+};
+
+Request.prototype._end = function() {
+  var self = this;
+  var xhr = this.xhr = request.getXHR();
+  var data = this._formData || this._data;
+
+  this._setTimeouts();
+
+  // state change
+  xhr.onreadystatechange = function(){
+    var readyState = xhr.readyState;
+    if (readyState >= 2 && self._responseTimeoutTimer) {
+      clearTimeout(self._responseTimeoutTimer);
+    }
+    if (4 != readyState) {
+      return;
+    }
+
+    // In IE9, reads to any property (e.g. status) off of an aborted XHR will
+    // result in the error "Could not complete the operation due to error c00c023f"
+    var status;
+    try { status = xhr.status } catch(e) { status = 0; }
+
+    if (!status) {
+      if (self.timedout || self._aborted) return;
+      return self.crossDomainError();
+    }
+    self.emit('end');
+  };
+
+  // progress
+  var handleProgress = function(direction, e) {
+    if (e.total > 0) {
+      e.percent = e.loaded / e.total * 100;
+    }
+    e.direction = direction;
+    self.emit('progress', e);
+  }
+  if (this.hasListeners('progress')) {
+    try {
+      xhr.onprogress = handleProgress.bind(null, 'download');
+      if (xhr.upload) {
+        xhr.upload.onprogress = handleProgress.bind(null, 'upload');
+      }
+    } catch(e) {
+      // Accessing xhr.upload fails in IE from a web worker, so just pretend it doesn't exist.
+      // Reported here:
+      // https://connect.microsoft.com/IE/feedback/details/837245/xmlhttprequest-upload-throws-invalid-argument-when-used-from-web-worker-context
+    }
+  }
+
+  // initiate request
+  try {
+    if (this.username && this.password) {
+      xhr.open(this.method, this.url, true, this.username, this.password);
+    } else {
+      xhr.open(this.method, this.url, true);
+    }
+  } catch (err) {
+    // see #1149
+    return this.callback(err);
+  }
+
+  // CORS
+  if (this._withCredentials) xhr.withCredentials = true;
+
+  // body
+  if (!this._formData && 'GET' != this.method && 'HEAD' != this.method && 'string' != typeof data && !this._isHost(data)) {
+    // serialize stuff
+    var contentType = this._header['content-type'];
+    var serialize = this._serializer || request.serialize[contentType ? contentType.split(';')[0] : ''];
+    if (!serialize && isJSON(contentType)) {
+      serialize = request.serialize['application/json'];
+    }
+    if (serialize) data = serialize(data);
+  }
+
+  // set header fields
+  for (var field in this.header) {
+    if (null == this.header[field]) continue;
+
+    if (this.header.hasOwnProperty(field))
+      xhr.setRequestHeader(field, this.header[field]);
+  }
+
+  if (this._responseType) {
+    xhr.responseType = this._responseType;
+  }
+
+  // send stuff
+  this.emit('request', this);
+
+  // IE11 xhr.send(undefined) sends 'undefined' string as POST payload (instead of nothing)
+  // We need null here if data is undefined
+  xhr.send(typeof data !== 'undefined' ? data : null);
+  return this;
+};
+
+/**
+ * GET `url` with optional callback `fn(res)`.
+ *
+ * @param {String} url
+ * @param {Mixed|Function} [data] or fn
+ * @param {Function} [fn]
+ * @return {Request}
+ * @api public
+ */
+
+request.get = function(url, data, fn){
+  var req = request('GET', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.query(data);
+  if (fn) req.end(fn);
+  return req;
+};
+
+/**
+ * HEAD `url` with optional callback `fn(res)`.
+ *
+ * @param {String} url
+ * @param {Mixed|Function} [data] or fn
+ * @param {Function} [fn]
+ * @return {Request}
+ * @api public
+ */
+
+request.head = function(url, data, fn){
+  var req = request('HEAD', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.send(data);
+  if (fn) req.end(fn);
+  return req;
+};
+
+/**
+ * OPTIONS query to `url` with optional callback `fn(res)`.
+ *
+ * @param {String} url
+ * @param {Mixed|Function} [data] or fn
+ * @param {Function} [fn]
+ * @return {Request}
+ * @api public
+ */
+
+request.options = function(url, data, fn){
+  var req = request('OPTIONS', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.send(data);
+  if (fn) req.end(fn);
+  return req;
+};
+
+/**
+ * DELETE `url` with optional `data` and callback `fn(res)`.
+ *
+ * @param {String} url
+ * @param {Mixed} [data]
+ * @param {Function} [fn]
+ * @return {Request}
+ * @api public
+ */
+
+function del(url, data, fn){
+  var req = request('DELETE', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.send(data);
+  if (fn) req.end(fn);
+  return req;
+};
+
+request['del'] = del;
+request['delete'] = del;
+
+/**
+ * PATCH `url` with optional `data` and callback `fn(res)`.
+ *
+ * @param {String} url
+ * @param {Mixed} [data]
+ * @param {Function} [fn]
+ * @return {Request}
+ * @api public
+ */
+
+request.patch = function(url, data, fn){
+  var req = request('PATCH', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.send(data);
+  if (fn) req.end(fn);
+  return req;
+};
+
+/**
+ * POST `url` with optional `data` and callback `fn(res)`.
+ *
+ * @param {String} url
+ * @param {Mixed} [data]
+ * @param {Function} [fn]
+ * @return {Request}
+ * @api public
+ */
+
+request.post = function(url, data, fn){
+  var req = request('POST', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.send(data);
+  if (fn) req.end(fn);
+  return req;
+};
+
+/**
+ * PUT `url` with optional `data` and callback `fn(res)`.
+ *
+ * @param {String} url
+ * @param {Mixed|Function} [data] or fn
+ * @param {Function} [fn]
+ * @return {Request}
+ * @api public
+ */
+
+request.put = function(url, data, fn){
+  var req = request('PUT', url);
+  if ('function' == typeof data) fn = data, data = null;
+  if (data) req.send(data);
+  if (fn) req.end(fn);
+  return req;
+};
+
 
 /***/ }),
-/* 19 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+const superagent = __webpack_require__(15);
 
-var normalizeOptions = __webpack_require__(3);
+const normalizeOptions = __webpack_require__(4);
+const queryByHose = __webpack_require__(38);
+const spinus = __webpack_require__(39);
+const twoD = __webpack_require__(40);
 
-module.exports = function twoD(dim1, dim2, molecule, options) {
-    var _normalizeOptions = normalizeOptions(molecule, options);
+const defaultProtonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/h1.json';
+const defaultCarbonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/nmrshiftdb2.json';
 
-    var _normalizeOptions2 = _slicedToArray(_normalizeOptions, 2);
-
-    molecule = _normalizeOptions2[0];
-    options = _normalizeOptions2[1];
-
-    var fromAtomLabel = '';
-    var toAtomLabel = '';
-    if (dim1 && dim1.length > 0) {
-        fromAtomLabel = dim1[0].atomLabel;
-    }
-    if (dim2 && dim2.length > 0) {
-        toAtomLabel = dim2[0].atomLabel;
-    }
-
-    options = Object.assign({ minLength: 1, maxLength: 3 }, options, { fromLabel: fromAtomLabel, toLabel: toAtomLabel });
-
-    var paths = molecule.getAllPaths(options);
-    var inverseMap = {};
-    if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
-        molecule.removeExplicitHydrogens();
-        var diaIDsC = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel: 'C' });
-        diaIDsC.forEach(diaID => {
-            inverseMap[diaID.atoms.join(',')] = diaID.oclID;
-        });
-    }
-    //console.log(paths);
-    paths.forEach(path => {
-        if (path.fromLabel === 'C') {
-            path.fromDiaID = inverseMap[path.fromAtoms.join(',')];
-        }
-        if (path.toLabel === 'C') {
-            path.toDiaID = inverseMap[path.toAtoms.join(',')];
-        }
-    });
-
-    var idMap1 = {};
-    dim1.forEach(prediction => idMap1[prediction.diaIDs[0]] = prediction);
-
-    var idMap2 = {};
-    dim2.forEach(prediction => idMap2[prediction.diaIDs[0]] = prediction);
-
-    paths.forEach(element => {
-        element.fromChemicalShift = idMap1[element.fromDiaID].delta;
-        element.toChemicalShift = idMap2[element.toDiaID].delta;
-        element.fromAtomLabel = fromAtomLabel;
-        element.toAtomLabel = toAtomLabel;
-        //@TODO Add the coupling constants in any case!!!!!!
-        element.j = getCouplingConstant(idMap1, element.fromDiaID, element.toDiaID);
-    });
-
-    return paths;
-};
-
-function getCouplingConstant(idMap, fromDiaID, toDiaID) {
-    var j = idMap[fromDiaID].j;
-    if (j) {
-        var index = j.length - 1;
-        while (index-- > 0) {
-            if (j[index].diaID === toDiaID) {
-                return j[index].coupling;
-            }
-        }
-    }
-    return 0;
-}
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var superagent = __webpack_require__(7);
-
-var normalizeOptions = __webpack_require__(3);
-var queryByHose = __webpack_require__(17);
-var spinus = __webpack_require__(18);
-var twoD = __webpack_require__(19);
-
-var defaultProtonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/h1.json';
-var defaultCarbonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/nmrshiftdb2.json';
-
-var databases = {};
+const databases = {};
 
 function fetchProton(url = defaultProtonUrl, dbName = 'proton') {
     return fetch(url, dbName, 'proton');
@@ -5193,19 +4781,19 @@ function fetch(url, dbName, type) {
         }
         return Promise.resolve(databases[dbName].db);
     }
-    var database = {
+    const database = {
         type,
         url,
         db: null,
         fetching: null
     };
     databases[dbName] = database;
-    var fetching = superagent.get(url).then(res => {
-        var db = res.body ? res.body : JSON.parse(res.text);
+    const fetching = superagent.get(url).then((res) => {
+        const db = res.body ? res.body : JSON.parse(res.text);
         database.db = db;
         database.fetching = false;
         return db;
-    }).catch(e => {
+    }).catch((e) => {
         delete databases[dbName];
         throw e;
     });
@@ -5215,36 +4803,22 @@ function fetch(url, dbName, type) {
 
 function proton(molecule, options) {
     options.atomLabel = 'H';
-
-    var _normalizeOptions = normalizeOptions(molecule, options);
-
-    var _normalizeOptions2 = _slicedToArray(_normalizeOptions, 2);
-
-    molecule = _normalizeOptions2[0];
-    options = _normalizeOptions2[1];
-
-    var db = getDb(options.db || 'proton', 'proton');
+    [molecule, options] = normalizeOptions(molecule, options);
+    const db = getDb(options.db || 'proton', 'proton');
     return queryByHose(molecule, db, options);
 }
 
 function carbon(molecule, options) {
     options.atomLabel = 'C';
-
-    var _normalizeOptions3 = normalizeOptions(molecule, options);
-
-    var _normalizeOptions4 = _slicedToArray(_normalizeOptions3, 2);
-
-    molecule = _normalizeOptions4[0];
-    options = _normalizeOptions4[1];
-
-    var db = getDb(options.db || 'carbon', 'carbon');
+    [molecule, options] = normalizeOptions(molecule, options);
+    const db = getDb(options.db || 'carbon', 'carbon');
     return queryByHose(molecule, db, options);
 }
 
 function getDb(option, type) {
     if (typeof option === 'object') return option;
     if (typeof option !== 'string') throw new TypeError('database option must be a string or array');
-    var db = databases[option];
+    const db = databases[option];
     if (!db) throw new Error(`database ${option} does not exist. Did you forget to fetch it?`);
     if (db.fetching) throw new Error(`database ${option} is not fetched yet`);
     if (db.type !== type) throw new Error(`database ${option} is of type ${db.type} instead of ${type}`);
@@ -5260,8 +4834,18 @@ module.exports = {
     twoD
 };
 
+
 /***/ }),
-/* 21 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(16);
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -5430,13 +5014,13 @@ Emitter.prototype.hasListeners = function(event){
 
 
 /***/ }),
-/* 22 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Stat = __webpack_require__(14).array;
+const Stat = __webpack_require__(12).array;
 /**
  * Function that returns an array of points given 1D array as follows:
  *
@@ -5662,7 +5246,7 @@ module.exports = {
 
 
 /***/ }),
-/* 23 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5922,25 +5506,25 @@ exports.getEquallySpacedData = getEquallySpacedData;
 exports.integral = integral;
 
 /***/ }),
-/* 24 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = exports = __webpack_require__(22);
+module.exports = exports = __webpack_require__(19);
 
 
-exports.getEquallySpacedData = __webpack_require__(23).getEquallySpacedData;
-exports.SNV = __webpack_require__(25).SNV;
+exports.getEquallySpacedData = __webpack_require__(20).getEquallySpacedData;
+exports.SNV = __webpack_require__(22).SNV;
 
 
 /***/ }),
-/* 25 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 exports.SNV = SNV;
-var Stat = __webpack_require__(14).array;
+var Stat = __webpack_require__(12).array;
 
 /**
  * Function that applies the standard normal variate (SNV) to an array of values.
@@ -5960,13 +5544,13 @@ function SNV(data) {
 
 
 /***/ }),
-/* 26 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Matrix = __webpack_require__(12);
+const Matrix = __webpack_require__(10);
 
 /**
  * Algorithm that finds the shortest distance from one node to the other
@@ -6013,7 +5597,7 @@ module.exports = floydWarshall;
 
 
 /***/ }),
-/* 27 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6110,14 +5694,14 @@ module.exports = CholeskyDecomposition;
 
 
 /***/ }),
-/* 28 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 const Matrix = __webpack_require__(0).Matrix;
-const util = __webpack_require__(4);
+const util = __webpack_require__(3);
 const hypotenuse = util.hypotenuse;
 const getFilled2DArray = util.getFilled2DArray;
 
@@ -6897,14 +6481,14 @@ module.exports = EigenvalueDecomposition;
 
 
 /***/ }),
-/* 29 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var Matrix = __webpack_require__(0).Matrix;
-var hypotenuse = __webpack_require__(4).hypotenuse;
+var hypotenuse = __webpack_require__(3).hypotenuse;
 
 //https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 function QrDecomposition(value) {
@@ -7056,7 +6640,7 @@ module.exports = QrDecomposition;
 
 
 /***/ }),
-/* 30 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7064,11 +6648,11 @@ module.exports = QrDecomposition;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var SingularValueDecomposition = __webpack_require__(11);
-var EigenvalueDecomposition = __webpack_require__(28);
-var LuDecomposition = __webpack_require__(10);
-var QrDecomposition = __webpack_require__(29);
-var CholeskyDecomposition = __webpack_require__(27);
+var SingularValueDecomposition = __webpack_require__(9);
+var EigenvalueDecomposition = __webpack_require__(25);
+var LuDecomposition = __webpack_require__(8);
+var QrDecomposition = __webpack_require__(26);
+var CholeskyDecomposition = __webpack_require__(24);
 
 function inverse(matrix) {
     matrix = Matrix.checkMatrix(matrix);
@@ -7125,7 +6709,7 @@ module.exports = {
 
 
 /***/ }),
-/* 31 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7137,7 +6721,7 @@ if (!Symbol.species) {
 
 
 /***/ }),
-/* 32 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7165,7 +6749,7 @@ module.exports = MatrixColumnView;
 
 
 /***/ }),
-/* 33 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7192,7 +6776,7 @@ module.exports = MatrixFlipColumnView;
 
 
 /***/ }),
-/* 34 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7219,7 +6803,7 @@ module.exports = MatrixFlipRowView;
 
 
 /***/ }),
-/* 35 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7247,7 +6831,7 @@ module.exports = MatrixRowView;
 
 
 /***/ }),
-/* 36 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7278,7 +6862,7 @@ module.exports = MatrixSelectionView;
 
 
 /***/ }),
-/* 37 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7309,7 +6893,7 @@ module.exports = MatrixSubView;
 
 
 /***/ }),
-/* 38 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7336,13 +6920,13 @@ module.exports = MatrixTransposeView;
 
 
 /***/ }),
-/* 39 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var arrayStat = __webpack_require__(13);
+var arrayStat = __webpack_require__(11);
 
 function compareNumbers(a, b) {
     return a - b;
@@ -7954,7 +7538,7 @@ exports.weightedScatter = function weightedScatter(matrix, weights, means, facto
 
 
 /***/ }),
-/* 40 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = newArray
@@ -7970,13 +7554,347 @@ function newArray (n, value) {
 
 
 /***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const OCLE = __webpack_require__(59);
+
+module.exports = function queryByHose(molecule, db, options) {
+    var {
+        atomLabel = 'H',
+        use = null,
+        algorithm = 0,
+        levels = [6, 5, 4, 3, 2]
+    } = options;
+
+    levels.sort(function (a, b) {
+        return b - a;
+    });
+
+    var diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel});
+    var infoCOSY = [];
+
+    var atoms = {};
+    var atomNumbers = [];
+    var i, k, j, atom, hosesString;
+    for (j = diaIDs.length - 1; j >= 0; j--) {
+        hosesString = OCLE.Util.getHoseCodesFromDiastereotopicID(diaIDs[j].oclID, {
+            maxSphereSize: levels[0],
+            type: algorithm
+        });
+        atom = {
+            diaIDs: [diaIDs[j].oclID + '']
+        };
+        for (k = 0; k < levels.length; k++) {
+            if (hosesString[levels[k] - 1]) {
+                atom['hose' + levels[k]] = hosesString[levels[k] - 1] + '';
+            }
+        }
+        for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
+            atoms[diaIDs[j].atoms[k]] = JSON.parse(JSON.stringify(atom));
+            atomNumbers.push(diaIDs[j].atoms[k]);
+        }
+    }
+    //Now, we twoD the chimical shift by using our copy of NMRShiftDB
+    //var script2 = 'select chemicalShift FROM assignment where ';//hose5='dgH`EBYReZYiIjjjjj@OzP`NET'';
+    var toReturn = new Array(atomNumbers.length);
+    for (j = 0; j < atomNumbers.length; j++) {
+        atom = atoms[atomNumbers[j]];
+        var res = null;
+        k = 0;
+        //A really simple query
+        while (!res && k < levels.length) {
+            if (db[levels[k]]) {
+                res = db[levels[k]][atom['hose' + levels[k]]];
+            }
+            k++;
+        }
+        if (!res) {
+            res = {cs: null, ncs: 0, std: 0, min: 0, max: 0};//Default values
+        }
+        atom.atomLabel = atomLabel;
+        atom.level = levels[k - 1];
+        atom.delta = res.cs;
+        if (use === 'median' && res.median) {
+            atom.delta = res.median;
+        } else if (use === 'mean' && res.mean) {
+            atom.delta = res.mean;
+        }
+        atom.integral = 1;
+        atom.atomIDs = ['' + atomNumbers[j]];
+        atom.ncs = res.ncs;
+        atom.std = res.std;
+        atom.min = res.min;
+        atom.max = res.max;
+        atom.j = [];
+
+        //Add the predicted couplings
+        //console.log(atomNumbers[j]+' '+infoCOSY[0].atom1);
+        for (i = infoCOSY.length - 1; i >= 0; i--) {
+            if (infoCOSY[i].atom1 - 1 === atomNumbers[j] && infoCOSY[i].coupling > 2) {
+                atom.j.push({
+                    'assignment': infoCOSY[i].atom2 - 1 + '', //Put the diaID instead
+                    'diaID': infoCOSY[i].diaID2,
+                    'coupling': infoCOSY[i].coupling,
+                    'multiplicity': 'd'
+                });
+            }
+        }
+        toReturn[j] = atom;
+    }
+    //TODO this will not work because getPaths is not implemented yet!!!!
+    if (options.ignoreLabile) {
+        var linksOH = molecule.getAllPaths({
+            fromLabel: 'H',
+            toLabel: 'O',
+            minLength: 1,
+            maxLength: 1
+        });
+        var linksNH = molecule.getAllPaths({
+            fromLabel: 'H',
+            toLabel: 'N',
+            minLength: 1,
+            maxLength: 1
+        });
+        for (j = toReturn.length - 1; j >= 0; j--) {
+            for (k = 0; k < linksOH.length; k++) {
+                if (toReturn[j].diaIDs[0] === linksOH[k].fromDiaID) {
+                    toReturn.splice(j, 1);
+                    break;
+                }
+            }
+        }
+
+        for (j = toReturn.length - 1; j >= 0; j--) {
+            for (k = 0; k < linksNH.length; k++) {
+                if (toReturn[j].diaIDs[0] === linksNH[k].fromDiaID) {
+                    toReturn.splice(j, 1);
+                    break;
+                }
+            }
+        }
+    }
+    return toReturn;
+};
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const newArray = __webpack_require__(37);
+const superagent = __webpack_require__(15);
+const group = __webpack_require__(68).group;
+const normalizeOptions = __webpack_require__(4);
+
+/**
+ * Makes a prediction using spinus
+ * @param {string|Molecule} molecule
+ * @param {object} [options]
+ * @return {Promise<Array>}
+ */
+module.exports = function spinus(molecule, options) {
+    [molecule, options] = normalizeOptions(molecule, options);
+    return fromSpinus(molecule).then(prediction => {
+        if (options.group) {
+            prediction = group(prediction);
+        }
+        return prediction;
+    });
+};
+
+function fromSpinus(molecule) {
+    const request = superagent.post('https://www.nmrdb.org/service/predictor');
+    request.field('molfile', molecule.toMolfile());
+
+    return request.then(response => {
+        //Convert to the ranges format and include the diaID for each atomID
+        const data = spinusParser(response.text);
+        const ids = data.ids;
+        const jc = data.couplingConstants;
+        const cs = data.chemicalShifts;
+        const multiplicity = data.multiplicity;
+        const integrals = data.integrals;
+        const nspins = cs.length;
+        const diaIDs = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'H'});
+        const distanceMatrix = molecule.getConnectivityMatrix({pathLength: true});
+        var result = new Array(nspins);
+        var atoms = {};
+        var atomNumbers = [];
+        var i, j, k, oclID, tmpCS;
+        var csByOclID = {};
+        for (j = diaIDs.length - 1; j >= 0; j--) {
+            oclID = diaIDs[j].oclID + '';
+            for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
+                atoms[diaIDs[j].atoms[k]] = oclID;
+                atomNumbers.push(diaIDs[j].atoms[k]);
+                if (!csByOclID[oclID]) {
+                    csByOclID[oclID] = {nc: 1, cs: cs[ids[diaIDs[j].atoms[k]]]};
+                } else {
+                    csByOclID[oclID].nc++;
+                    csByOclID[oclID].cs += cs[ids[diaIDs[j].atoms[k]]];
+                }
+            }
+        }
+
+        var idsKeys = Object.keys(ids);
+        for (i = 0; i < nspins; i++) {
+            tmpCS = csByOclID[atoms[idsKeys[i]]].cs / csByOclID[atoms[idsKeys[i]]].nc;
+            result[i] = {
+                atomIDs: [idsKeys[i]], //It's not in eln format
+                diaIDs: [atoms[idsKeys[i]]],
+                nbAtoms: integrals[i],
+                delta: tmpCS,
+                atomLabel: 'H',
+                j: []
+            };
+
+            for (j = 0; j < nspins; j++) {
+                if (jc[i][j] !== 0) {
+                    result[i].j.push({
+                        assignment: [idsKeys[j]],
+                        diaID: atoms[idsKeys[j]],
+                        coupling: jc[i][j],
+                        multiplicity: multiplicity[j],
+                        distance: distanceMatrix[idsKeys[i]][idsKeys[j]]
+                    });
+                }
+            }
+        }
+        return result;
+    });
+}
+
+function spinusParser(result) {
+    var lines = result.split('\n');
+    var nspins = lines.length - 1;
+    var cs = new Array(nspins);
+    var integrals = new Array(nspins);
+    var ids = {};
+    var jc = new Array(nspins);
+    var i, j;
+
+    for (i = 0; i < nspins; i++) {
+        jc[i] = newArray(nspins, 0);
+        var tokens = lines[i].split('\t');
+        cs[i] = +tokens[2];
+        ids[tokens[0] - 1] = i;
+        integrals[i] = 1;//+tokens[5];//Is it always 1??
+    }
+
+    for (i = 0; i < nspins; i++) {
+        tokens = lines[i].split('\t');
+        var nCoup = (tokens.length - 4) / 3;
+        for (j = 0; j < nCoup; j++) {
+            var withID = tokens[4 + 3 * j] - 1;
+            var idx = ids[withID];
+            jc[i][idx] = (+tokens[6 + 3 * j]);
+        }
+    }
+
+    for (j = 0; j < nspins; j++) {
+        for (i = j; i < nspins; i++) {
+            jc[j][i] = jc[i][j];
+        }
+    }
+
+    return {
+        ids,
+        chemicalShifts: cs,
+        integrals,
+        couplingConstants: jc,
+        multiplicity: newArray(nspins, 'd')
+    };
+}
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const normalizeOptions = __webpack_require__(4);
+
+module.exports = function twoD(dim1, dim2, molecule, options) {
+    [molecule, options] = normalizeOptions(molecule, options);
+    var fromAtomLabel = '';
+    var toAtomLabel = '';
+    if (dim1 && dim1.length > 0) {
+        fromAtomLabel = dim1[0].atomLabel;
+    }
+    if (dim2 && dim2.length > 0) {
+        toAtomLabel = dim2[0].atomLabel;
+    }
+
+    options = Object.assign({minLength: 1, maxLength: 3}, options, {fromLabel: fromAtomLabel, toLabel: toAtomLabel});
+
+    var paths = molecule.getAllPaths(options);
+    var inverseMap = {};
+    if (fromAtomLabel === 'C' || toAtomLabel === 'C') {
+        molecule.removeExplicitHydrogens();
+        var diaIDsC = molecule.getGroupedDiastereotopicAtomIDs({atomLabel: 'C'});
+        diaIDsC.forEach(diaID => {
+            inverseMap[diaID.atoms.join(',')] = diaID.oclID;
+        });
+    }
+
+    paths.forEach(path => {
+        if (path.fromLabel === 'C') {
+            path.fromDiaID = inverseMap[path.fromAtoms.join(',')];
+        }
+        if (path.toLabel === 'C') {
+            path.toDiaID = inverseMap[path.toAtoms.join(',')];
+        }
+    });
+
+    var idMap1 = {};
+    dim1.forEach(prediction => idMap1[prediction.diaIDs[0]] = prediction);
+
+    var idMap2 = {};
+    dim2.forEach(prediction => idMap2[prediction.diaIDs[0]] = prediction);
+
+    paths.forEach(element => {
+        element.fromChemicalShift = idMap1[element.fromDiaID].delta;
+        element.toChemicalShift = idMap2[element.toDiaID].delta;
+        element.fromAtomLabel = fromAtomLabel;
+        element.toAtomLabel = toAtomLabel;
+        //@TODO Add the coupling constants in any case!!!!!!
+        element.j = getCouplingConstant(idMap1, element.fromDiaID, element.toDiaID);
+    });
+
+    return paths;
+};
+
+function getCouplingConstant(idMap, fromDiaID, toDiaID) {
+    const j = idMap[fromDiaID].j;
+    if (j) {
+        var index = j.length - 1;
+        while (index-- > 0) {
+            if (j[index].diaID === toDiaID) {
+                return j[index].coupling;
+            }
+        }
+    }
+    return 0;
+}
+
+
+/***/ }),
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(15)(__webpack_require__(63));
+module.exports = __webpack_require__(13)(__webpack_require__(63));
 
 
 /***/ }),
@@ -8285,7 +8203,7 @@ function getMW(query) {
     copy.setFragment(false);
     return copy.getMolecularFormula().relativeWeight;
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(73).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(74).setImmediate))
 
 /***/ }),
 /* 43 */
@@ -8379,8 +8297,8 @@ module.exports = {
 "use strict";
 
 
-var floydWarshall = __webpack_require__(26);
-var Matrix = __webpack_require__(12);
+var floydWarshall = __webpack_require__(23);
+var Matrix = __webpack_require__(10);
 
 module.exports = function getAllPaths() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -9337,10 +9255,10 @@ module.exports = function toVisualizerMolfile() {
 "use strict";
 
 
-__webpack_require__(16);
+__webpack_require__(14);
 var OCL = __webpack_require__(61);
 
-__webpack_require__(15)(OCL);
+__webpack_require__(13)(OCL);
 module.exports = OCL;
 
 /***/ }),
@@ -11790,6 +11708,164 @@ module.exports = parse;
 /* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+const patterns = ['s', 'd', 't', 'q', 'quint', 'h', 'sept', 'o', 'n'];
+
+module.exports.nmrJ = function nmrJ(Js, options = {}) {
+    var jString = '';
+    options = Object.assign({}, {separator: ', ', nbDecimal: 2}, options);
+    let j, i;
+    for (i = 0; i < Js.length; i++) {
+        j = Js[i];
+        if (j.length > 11) {
+            j += options.separator;
+        }
+        jString += j.multiplicity + ' ' + j.coupling.toFixed(options.nbDecimal);
+    }
+    return jString;
+};
+
+module.exports.joinCoupling = function joinCoupling(signal, tolerance = 0.05) {
+    var jc = signal.j;
+    if (jc && jc.length > 0) {
+        var cont = jc[0].assignment ? jc[0].assignment.length : 1;
+        var pattern = '';
+        var newNmrJs = [];
+        var diaIDs = [];
+        var atoms = [];
+        jc.sort(function (a, b) {
+            return b.coupling - a.coupling;
+        });
+        if (jc[0].diaID) {
+            diaIDs = [jc[0].diaID];
+        }
+        if (jc[0].assignment) {
+            atoms = jc[0].assignment;
+        }
+        for (var i = 0; i < jc.length - 1; i++) {
+            if (Math.abs(jc[i].coupling - jc[i + 1].coupling) < tolerance) {
+                cont += jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
+                diaIDs.push(jc[i].diaID);
+                atoms = atoms.concat(jc[i + 1].assignment);
+            } else {
+                let jTemp = {
+                    coupling: Math.abs(jc[i].coupling),
+                    multiplicity: patterns[cont]
+                };
+                if (diaIDs.length > 0) {
+                    jTemp.diaID = diaIDs;
+                }
+                if (atoms.length > 0) {
+                    jTemp.assignment = atoms;
+                }
+                newNmrJs.push(jTemp);
+                if (jc[0].diaID) {
+                    diaIDs = [jc[i].diaID];
+                }
+                if (jc[0].assignment) {
+                    atoms = jc[i].assignment;
+                }
+                pattern += patterns[cont];
+                cont = jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
+            }
+        }
+        let jTemp = {
+            coupling: Math.abs(jc[i].coupling),
+            multiplicity: patterns[cont]
+        };
+        if (diaIDs.length > 0) {
+            jTemp.diaID = diaIDs;
+        }
+        if (atoms.length > 0) {
+            jTemp.assignment = atoms;
+        }
+        newNmrJs.push(jTemp);
+
+        pattern += patterns[cont];
+        signal.j = newNmrJs;
+
+    } else if (signal.delta) {
+        pattern = 's';
+    } else {
+        pattern = 'm';
+    }
+    return pattern;
+};
+
+module.exports.group = function group(signals, options = {}) {
+    var i, k;
+    for (i = 0; i < signals.length; i++) {
+        var j = signals[i].j;
+        if (j && j.length > 0) {
+            for (k = j.length - 2; k >= 0; k--) {
+                for (var m = j.length - 1; m > k; m--) {
+                    if (j[k].diaID === j[m].diaID &&
+                        j[k].coupling === j[m].coupling &&
+                        j[k].distance === j[m].distance) {
+                        j[k].assignment = j[k].assignment.concat(j[m].assignment);
+                        j.splice(m, 1);
+                    }
+                }
+            }
+        }
+    }
+    signals.sort((a, b) => {
+        if (a.diaIDs[0] < b.diaIDs[0]) return -1;
+        if (a.diaIDs[0] > b.diaIDs[0]) return 1;
+        return 0;
+    });
+
+    for (i = signals.length - 2; i >= 0; i--) {
+        if (signals[i].diaIDs[0] === signals[i + 1].diaIDs[0]) {
+            signals[i].nbAtoms += signals[i + 1].nbAtoms;
+            signals[i].atomIDs = signals[i].atomIDs.concat(signals[i + 1].atomIDs);
+            signals.splice(i + 1, 1);
+        }
+    }
+    for (i = 0; i < signals.length; i++) {
+        j = signals[i].j;
+        for (k = 0; k < j.length; k++) {
+            j[k].multiplicity = patterns[j[k].assignment.length];
+        }
+        signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
+    }
+    return signals;
+};
+
+
+module.exports.compilePattern = function compilePattern(signal, tolerance = 0.05) {
+    var jc = signal.j;
+    var pattern = '';
+    if (jc && jc.length > 0) {
+        var cont = jc[0].assignment ? jc[0].assignment.length : 0;
+        jc.sort(function (a, b) {
+            return b.coupling - a.coupling;
+        });
+        for (var i = 0; i < jc.length - 1; i++) {
+            if (Math.abs(jc[i].coupling - jc[i + 1].coupling) < tolerance) {
+                cont += jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
+            } else {
+                pattern += patterns[cont];
+                cont = jc[i + 1].assignment ? jc[i + 1].assignment.length : 1;
+            }
+        }
+        pattern += patterns[cont];
+    } else if (signal.delta) {
+        pattern = 's';
+    } else {
+        pattern = 'm';
+    }
+    return pattern;
+};
+
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
 /**
  * Check if `fn` is a function.
  *
@@ -11808,7 +11884,7 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -12405,7 +12481,7 @@ RequestBase.prototype._setTimeouts = function() {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -12413,7 +12489,7 @@ RequestBase.prototype._setTimeouts = function() {
  * Module dependencies.
  */
 
-var utils = __webpack_require__(72);
+var utils = __webpack_require__(73);
 
 /**
  * Expose `ResponseBase`.
@@ -12544,7 +12620,7 @@ ResponseBase.prototype._setStatusProperties = function(status){
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports) {
 
 var ERROR_CODES = [
@@ -12573,7 +12649,7 @@ module.exports = function shouldRetry(err, res) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports) {
 
 
@@ -12646,7 +12722,7 @@ exports.cleanHeader = function(header, shouldStripCookie){
 };
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -12699,7 +12775,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(16);
+__webpack_require__(14);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
