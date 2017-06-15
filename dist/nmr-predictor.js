@@ -406,12 +406,10 @@ exports.sumAll = function sumAll(matrix) {
 "use strict";
 
 
-var _require = __webpack_require__(41);
+var _require = __webpack_require__(41),
+    Molecule = _require.Molecule;
 
-const Molecule = _require.Molecule;
-
-
-const defaultOptions = {
+var defaultOptions = {
     atomLabel: 'H',
     ignoreLabile: true,
     use: 'median'
@@ -1495,7 +1493,7 @@ module.exports = function group(prediction, options) {
         }
 
         for (i = 0; i < prediction.length; i++) {
-            let j = prediction[i].j;
+            var j = prediction[i].j;
             if (j && j.length > 0) {
                 j.sort((a, b) => {
                     return a.diaID.localeCompare(b.diaID);
@@ -4803,14 +4801,14 @@ module.exports = function extend(OCL) {
 "use strict";
 
 
-const OCLE = __webpack_require__(59);
+var OCLE = __webpack_require__(59);
 
-const group = __webpack_require__(8);
+var group = __webpack_require__(8);
 
 module.exports = function queryByHose(molecule, db, options) {
     //molecule.addImplicitHydrogens();
-    const atomLabel = options.atomLabel || 'H';
-    const use = options.use;
+    var atomLabel = options.atomLabel || 'H';
+    var use = options.use;
     var algorithm = options.algorithm || 0;
     var levels = options.hoseLevels || [6, 5, 4, 3, 2];
 
@@ -4932,11 +4930,11 @@ module.exports = function queryByHose(molecule, db, options) {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-const newArray = __webpack_require__(40);
-const superagent = __webpack_require__(7);
+var newArray = __webpack_require__(40);
+var superagent = __webpack_require__(7);
 
-const group = __webpack_require__(8);
-const normalizeOptions = __webpack_require__(3);
+var group = __webpack_require__(8);
+var normalizeOptions = __webpack_require__(3);
 
 /**
  * Makes a prediction using spinus
@@ -4956,21 +4954,21 @@ module.exports = function spinus(molecule, options) {
 };
 
 function fromSpinus(molecule) {
-    const request = superagent.post('https://www.nmrdb.org/service/predictor');
+    var request = superagent.post('https://www.nmrdb.org/service/predictor');
     request.field('molfile', molecule.toMolfile());
 
     return request.then(response => {
         //Convert to the ranges format and include the diaID for each atomID
-        const data = spinusParser(response.text);
-        const ids = data.ids;
-        const jc = data.couplingConstants;
-        const cs = data.chemicalShifts;
-        const multiplicity = data.multiplicity;
-        const integrals = data.integrals;
+        var data = spinusParser(response.text);
+        var ids = data.ids;
+        var jc = data.couplingConstants;
+        var cs = data.chemicalShifts;
+        var multiplicity = data.multiplicity;
+        var integrals = data.integrals;
 
-        const nspins = cs.length;
+        var nspins = cs.length;
 
-        const diaIDs = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel: 'H' });
+        var diaIDs = molecule.getGroupedDiastereotopicAtomIDs({ atomLabel: 'H' });
         var result = new Array(nspins);
         var atoms = {};
         var atomNumbers = [];
@@ -5088,7 +5086,7 @@ function multiplicityToString(mul) {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-const normalizeOptions = __webpack_require__(3);
+var normalizeOptions = __webpack_require__(3);
 
 module.exports = function twoD(dim1, dim2, molecule, options) {
     var _normalizeOptions = normalizeOptions(molecule, options);
@@ -5147,7 +5145,7 @@ module.exports = function twoD(dim1, dim2, molecule, options) {
 };
 
 function getCouplingConstant(idMap, fromDiaID, toDiaID) {
-    const j = idMap[fromDiaID].j;
+    var j = idMap[fromDiaID].j;
     if (j) {
         var index = j.length - 1;
         while (index-- > 0) {
@@ -5168,17 +5166,17 @@ function getCouplingConstant(idMap, fromDiaID, toDiaID) {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-const superagent = __webpack_require__(7);
+var superagent = __webpack_require__(7);
 
-const normalizeOptions = __webpack_require__(3);
-const queryByHose = __webpack_require__(17);
-const spinus = __webpack_require__(18);
-const twoD = __webpack_require__(19);
+var normalizeOptions = __webpack_require__(3);
+var queryByHose = __webpack_require__(17);
+var spinus = __webpack_require__(18);
+var twoD = __webpack_require__(19);
 
-const defaultProtonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/h1.json';
-const defaultCarbonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/nmrshiftdb2.json';
+var defaultProtonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/h1.json';
+var defaultCarbonUrl = 'https://raw.githubusercontent.com/cheminfo-js/nmr-predictor/master/data/nmrshiftdb2.json';
 
-const databases = {};
+var databases = {};
 
 function fetchProton(url = defaultProtonUrl, dbName = 'proton') {
     return fetch(url, dbName, 'proton');
@@ -5195,15 +5193,15 @@ function fetch(url, dbName, type) {
         }
         return Promise.resolve(databases[dbName].db);
     }
-    const database = {
+    var database = {
         type,
         url,
         db: null,
         fetching: null
     };
     databases[dbName] = database;
-    const fetching = superagent.get(url).then(res => {
-        const db = res.body ? res.body : JSON.parse(res.text);
+    var fetching = superagent.get(url).then(res => {
+        var db = res.body ? res.body : JSON.parse(res.text);
         database.db = db;
         database.fetching = false;
         return db;
@@ -5225,7 +5223,7 @@ function proton(molecule, options) {
     molecule = _normalizeOptions2[0];
     options = _normalizeOptions2[1];
 
-    const db = getDb(options.db || 'proton', 'proton');
+    var db = getDb(options.db || 'proton', 'proton');
     return queryByHose(molecule, db, options);
 }
 
@@ -5239,14 +5237,14 @@ function carbon(molecule, options) {
     molecule = _normalizeOptions4[0];
     options = _normalizeOptions4[1];
 
-    const db = getDb(options.db || 'carbon', 'carbon');
+    var db = getDb(options.db || 'carbon', 'carbon');
     return queryByHose(molecule, db, options);
 }
 
 function getDb(option, type) {
     if (typeof option === 'object') return option;
     if (typeof option !== 'string') throw new TypeError('database option must be a string or array');
-    const db = databases[option];
+    var db = databases[option];
     if (!db) throw new Error(`database ${option} does not exist. Did you forget to fetch it?`);
     if (db.fetching) throw new Error(`database ${option} is not fetched yet`);
     if (db.type !== type) throw new Error(`database ${option} is of type ${db.type} instead of ${type}`);
@@ -9855,8 +9853,9 @@ module.exports = __webpack_require__(62);
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	Papa Parse
-	v4.3.2
+	v4.3.3
 	https://github.com/mholt/PapaParse
+	License: MIT
 */
 (function(root, factory)
 {
@@ -9868,7 +9867,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	}
-	else if (typeof module === 'object' && module.exports)
+	else if (typeof module === 'object' && typeof exports !== 'undefined')
 	{
 		// Node. Does not work with strict CommonJS, but
 		// only CommonJS-like environments that support module.exports,
@@ -9893,8 +9892,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		if (typeof window !== 'undefined') { return window; }
 		if (typeof global !== 'undefined') { return global; }
 
-        // When running tests none of the above have been defined
-        return {};
+		// When running tests none of the above have been defined
+		return {};
 	})();
 
 
@@ -10051,13 +10050,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	function CsvToJson(_input, _config)
 	{
 		_config = _config || {};
-        var dynamicTyping = _config.dynamicTyping || false;
-        if (isFunction(dynamicTyping)) {
-            _config.dynamicTypingFunction = dynamicTyping;
-            // Will be filled on first row call
-            dynamicTyping = {};
-        }
-        _config.dynamicTyping = dynamicTyping;
+		var dynamicTyping = _config.dynamicTyping || false;
+		if (isFunction(dynamicTyping)) {
+			_config.dynamicTypingFunction = dynamicTyping;
+			// Will be filled on first row call
+			dynamicTyping = {};
+		}
+		_config.dynamicTyping = dynamicTyping;
 
 		if (_config.worker && Papa.WORKERS_SUPPORTED)
 		{
@@ -10501,8 +10500,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		{
 			var contentRange = xhr.getResponseHeader('Content-Range');
 			if (contentRange === null) { // no content range, then finish!
-        			return -1;
-            		}
+					return -1;
+					}
 			return parseInt(contentRange.substr(contentRange.lastIndexOf('/') + 1));
 		}
 	}
@@ -10687,7 +10686,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		var _input;				// The input being parsed
 		var _parser;			// The core parser being used
 		var _paused = false;	// Whether we are paused or not
-		var _aborted = false;   // Whether the parser has aborted or not
+		var _aborted = false;	// Whether the parser has aborted or not
 		var _delimiterError;	// Temporary state between delimiter detection and processing results
 		var _fields = [];		// Fields are from the header row of the input, if there is one
 		var _results = {		// The last results returned from the parser
@@ -10831,13 +10830,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 			_results.data.splice(0, 1);
 		}
 
-        function shouldApplyDynamicTyping(field) {
-            // Cache function values to avoid calling it for each row
-            if (_config.dynamicTypingFunction && _config.dynamicTyping[field] === undefined) {
-                _config.dynamicTyping[field] = _config.dynamicTypingFunction(field);
-            }
-            return (_config.dynamicTyping[field] || _config.dynamicTyping) === true
-        }
+		function shouldApplyDynamicTyping(field) {
+			// Cache function values to avoid calling it for each row
+			if (_config.dynamicTypingFunction && _config.dynamicTyping[field] === undefined) {
+				_config.dynamicTyping[field] = _config.dynamicTypingFunction(field);
+			}
+			return (_config.dynamicTyping[field] || _config.dynamicTyping) === true
+		}
 
 		function parseDynamic(field, value)
 		{
