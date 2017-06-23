@@ -7636,10 +7636,10 @@ module.exports = function queryByHose(molecule, db, options) {
         for (i = infoCOSY.length - 1; i >= 0; i--) {
             if (infoCOSY[i].atom1 - 1 === atomNumbers[j] && infoCOSY[i].coupling > 2) {
                 atom.j.push({
-                    'assignment': infoCOSY[i].atom2 - 1 + '', //Put the diaID instead
-                    'diaID': infoCOSY[i].diaID2,
-                    'coupling': infoCOSY[i].coupling,
-                    'multiplicity': 'd'
+                    assignment: infoCOSY[i].atom2 - 1 + '', //Put the diaID instead
+                    diaID: infoCOSY[i].diaID2,
+                    coupling: infoCOSY[i].coupling,
+                    multiplicity: 'd'
                 });
             }
         }
@@ -11798,7 +11798,7 @@ module.exports.group = function group(signals, options = {}) {
     var i, k;
     for (i = 0; i < signals.length; i++) {
         var j = signals[i].j;
-        if (j && j.length > 0) {
+        if (j && j.lengthpublish > 0) {
             for (k = j.length - 2; k >= 0; k--) {
                 for (var m = j.length - 1; m > k; m--) {
                     if (j[k].diaID === j[m].diaID &&
