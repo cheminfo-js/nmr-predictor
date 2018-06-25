@@ -1,0 +1,424 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`1H prediction from molfile 1`] = `
+Array [
+  Object {
+    "atomIDs": Array [
+      "8",
+    ],
+    "atomLabel": "H",
+    "delta": 7.162,
+    "diaIDs": Array [
+      "did@\`@fTfYUn\`HH@GzP\`HeT",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "9",
+        ],
+        "coupling": 0.985,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "10",
+        ],
+        "coupling": 0.507,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 5,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "11",
+        ],
+        "coupling": 1.293,
+        "diaID": "did@\`@fTfUvf\`@h@GzP\`HeT",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "12",
+        ],
+        "coupling": 7.758,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "9",
+    ],
+    "atomLabel": "H",
+    "delta": 7.162,
+    "diaIDs": Array [
+      "did@\`@fTfYUn\`HH@GzP\`HeT",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "8",
+        ],
+        "coupling": 0.985,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "10",
+        ],
+        "coupling": 7.758,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "11",
+        ],
+        "coupling": 1.292,
+        "diaID": "did@\`@fTfUvf\`@h@GzP\`HeT",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "12",
+        ],
+        "coupling": 0.507,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 5,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "10",
+    ],
+    "atomLabel": "H",
+    "delta": 7.26,
+    "diaIDs": Array [
+      "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "8",
+        ],
+        "coupling": 0.507,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 5,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "9",
+        ],
+        "coupling": 7.758,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "11",
+        ],
+        "coupling": 7.718,
+        "diaID": "did@\`@fTfUvf\`@h@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "12",
+        ],
+        "coupling": 1.596,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "11",
+    ],
+    "atomLabel": "H",
+    "delta": 7.196,
+    "diaIDs": Array [
+      "did@\`@fTfUvf\`@h@GzP\`HeT",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "8",
+        ],
+        "coupling": 1.293,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "9",
+        ],
+        "coupling": 1.292,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "10",
+        ],
+        "coupling": 7.718,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "12",
+        ],
+        "coupling": 7.718,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "12",
+    ],
+    "atomLabel": "H",
+    "delta": 7.26,
+    "diaIDs": Array [
+      "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "8",
+        ],
+        "coupling": 7.758,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "9",
+        ],
+        "coupling": 0.507,
+        "diaID": "did@\`@fTfYUn\`HH@GzP\`HeT",
+        "distance": 5,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "10",
+        ],
+        "coupling": 1.596,
+        "diaID": "did@\`@f\\\\bbRaih@J@A~dHBIU@",
+        "distance": 4,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "11",
+        ],
+        "coupling": 7.718,
+        "diaID": "did@\`@fTfUvf\`@h@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "13",
+    ],
+    "atomLabel": "H",
+    "delta": 2.653,
+    "diaIDs": Array [
+      "did@\`@fTf[Waj@@bJ@_iB@bUP",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "15",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTeYWaj@@@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "16",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTeYWaj@@@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "17",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTeYWaj@@@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "14",
+    ],
+    "atomLabel": "H",
+    "delta": 2.653,
+    "diaIDs": Array [
+      "did@\`@fTf[Waj@@bJ@_iB@bUP",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "15",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTeYWaj@@@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "16",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTeYWaj@@@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "17",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTeYWaj@@@GzP\`HeT",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "15",
+    ],
+    "atomLabel": "H",
+    "delta": 0.992,
+    "diaIDs": Array [
+      "did@\`@fTeYWaj@@@GzP\`HeT",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "13",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTf[Waj@@bJ@_iB@bUP",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "14",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTf[Waj@@bJ@_iB@bUP",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "16",
+    ],
+    "atomLabel": "H",
+    "delta": 0.992,
+    "diaIDs": Array [
+      "did@\`@fTeYWaj@@@GzP\`HeT",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "13",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTf[Waj@@bJ@_iB@bUP",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "14",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTf[Waj@@bJ@_iB@bUP",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+  Object {
+    "atomIDs": Array [
+      "17",
+    ],
+    "atomLabel": "H",
+    "delta": 0.992,
+    "diaIDs": Array [
+      "did@\`@fTeYWaj@@@GzP\`HeT",
+    ],
+    "j": Array [
+      Object {
+        "assignment": Array [
+          "13",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTf[Waj@@bJ@_iB@bUP",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+      Object {
+        "assignment": Array [
+          "14",
+        ],
+        "coupling": 7.392,
+        "diaID": "did@\`@fTf[Waj@@bJ@_iB@bUP",
+        "distance": 3,
+        "multiplicity": "d",
+      },
+    ],
+    "nbAtoms": 1,
+  },
+]
+`;
