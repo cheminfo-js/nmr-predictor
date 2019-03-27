@@ -1,6 +1,6 @@
 /**
  * nmr-predictor
- * @version v1.2.2
+ * @version v1.2.3
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3161,7 +3161,7 @@ function abstractMatrix(superCtor) {
 
       if (c1 !== r2) {
         // eslint-disable-next-line no-console
-        console.warn(`Multiplying ${r1} x ${c1} and ${r2} x ${c2} matrix: dimensions do not match.`);
+        console.warn("Multiplying ".concat(r1, " x ").concat(c1, " and ").concat(r2, " x ").concat(c2, " matrix: dimensions do not match."));
       } // Put a matrix into the top left of a matrix of zeros.
       // `rows` and `cols` are the dimensions of the output matrix.
 
@@ -3708,100 +3708,17 @@ function abstractMatrix(superCtor) {
    Add dynamically instance and static methods for mathematical operations
    */
 
-  var inplaceOperator = `
-(function %name%(value) {
-    if (typeof value === 'number') return this.%name%S(value);
-    return this.%name%M(value);
-})
-`;
-  var inplaceOperatorScalar = `
-(function %name%S(value) {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, this.get(i, j) %op% value);
-        }
-    }
-    return this;
-})
-`;
-  var inplaceOperatorMatrix = `
-(function %name%M(matrix) {
-    matrix = this.constructor.checkMatrix(matrix);
-    checkDimensions(this, matrix);
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, this.get(i, j) %op% matrix.get(i, j));
-        }
-    }
-    return this;
-})
-`;
-  var staticOperator = `
-(function %name%(matrix, value) {
-    var newMatrix = new this[Symbol.species](matrix);
-    return newMatrix.%name%(value);
-})
-`;
-  var inplaceMethod = `
-(function %name%() {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j)));
-        }
-    }
-    return this;
-})
-`;
-  var staticMethod = `
-(function %name%(matrix) {
-    var newMatrix = new this[Symbol.species](matrix);
-    return newMatrix.%name%();
-})
-`;
-  var inplaceMethodWithArgs = `
-(function %name%(%args%) {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j), %args%));
-        }
-    }
-    return this;
-})
-`;
-  var staticMethodWithArgs = `
-(function %name%(matrix, %args%) {
-    var newMatrix = new this[Symbol.species](matrix);
-    return newMatrix.%name%(%args%);
-})
-`;
-  var inplaceMethodWithOneArgScalar = `
-(function %name%S(value) {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j), value));
-        }
-    }
-    return this;
-})
-`;
-  var inplaceMethodWithOneArgMatrix = `
-(function %name%M(matrix) {
-    matrix = this.constructor.checkMatrix(matrix);
-    checkDimensions(this, matrix);
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j), matrix.get(i, j)));
-        }
-    }
-    return this;
-})
-`;
-  var inplaceMethodWithOneArg = `
-(function %name%(value) {
-    if (typeof value === 'number') return this.%name%S(value);
-    return this.%name%M(value);
-})
-`;
+  var inplaceOperator = "\n(function %name%(value) {\n    if (typeof value === 'number') return this.%name%S(value);\n    return this.%name%M(value);\n})\n";
+  var inplaceOperatorScalar = "\n(function %name%S(value) {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, this.get(i, j) %op% value);\n        }\n    }\n    return this;\n})\n";
+  var inplaceOperatorMatrix = "\n(function %name%M(matrix) {\n    matrix = this.constructor.checkMatrix(matrix);\n    checkDimensions(this, matrix);\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, this.get(i, j) %op% matrix.get(i, j));\n        }\n    }\n    return this;\n})\n";
+  var staticOperator = "\n(function %name%(matrix, value) {\n    var newMatrix = new this[Symbol.species](matrix);\n    return newMatrix.%name%(value);\n})\n";
+  var inplaceMethod = "\n(function %name%() {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j)));\n        }\n    }\n    return this;\n})\n";
+  var staticMethod = "\n(function %name%(matrix) {\n    var newMatrix = new this[Symbol.species](matrix);\n    return newMatrix.%name%();\n})\n";
+  var inplaceMethodWithArgs = "\n(function %name%(%args%) {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j), %args%));\n        }\n    }\n    return this;\n})\n";
+  var staticMethodWithArgs = "\n(function %name%(matrix, %args%) {\n    var newMatrix = new this[Symbol.species](matrix);\n    return newMatrix.%name%(%args%);\n})\n";
+  var inplaceMethodWithOneArgScalar = "\n(function %name%S(value) {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j), value));\n        }\n    }\n    return this;\n})\n";
+  var inplaceMethodWithOneArgMatrix = "\n(function %name%M(matrix) {\n    matrix = this.constructor.checkMatrix(matrix);\n    checkDimensions(this, matrix);\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j), matrix.get(i, j)));\n        }\n    }\n    return this;\n})\n";
+  var inplaceMethodWithOneArg = "\n(function %name%(value) {\n    if (typeof value === 'number') return this.%name%S(value);\n    return this.%name%M(value);\n})\n";
   var staticMethodWithOneArg = staticMethodWithArgs;
   var operators = [// Arithmetic operators
   ['+', 'add'], ['-', 'sub', 'subtract'], ['*', 'mul', 'multiply'], ['/', 'div', 'divide'], ['%', 'mod', 'modulus'], // Bitwise operators
@@ -3859,7 +3776,7 @@ function abstractMatrix(superCtor) {
     var args = 'arg0';
 
     for (i = 1; i < methodWithArg[1]; i++) {
-      args += `, arg${i}`;
+      args += ", arg".concat(i);
     }
 
     if (methodWithArg[1] !== 1) {
@@ -6486,7 +6403,7 @@ function sumAll(matrix) {
 
 function checkNumber(name, value) {
   if (typeof value !== 'number') {
-    throw new TypeError(`${name} must be a number`);
+    throw new TypeError("".concat(name, " must be a number"));
   }
 }
 // CONCATENATED MODULE: ./node_modules/ml-matrix/src/views/base.js
@@ -7065,6 +6982,78 @@ function AbstractMatrix(superCtor) {
       }
 
       return false;
+    }
+    /**
+          * @return true if the matrix is in echelon form
+          */
+
+
+    isEchelonForm() {
+      let i = 0;
+      let j = 0;
+      let previousColumn = -1;
+      let isEchelonForm = true;
+      let checked = false;
+
+      while (i < this.rows && isEchelonForm) {
+        j = 0;
+        checked = false;
+
+        while (j < this.columns && checked === false) {
+          if (this.get(i, j) === 0) {
+            j++;
+          } else if (this.get(i, j) === 1 && j > previousColumn) {
+            checked = true;
+            previousColumn = j;
+          } else {
+            isEchelonForm = false;
+            checked = true;
+          }
+        }
+
+        i++;
+      }
+
+      return isEchelonForm;
+    }
+    /**
+             * @return true if the matrix is in reduced echelon form
+             */
+
+
+    isReducedEchelonForm() {
+      let i = 0;
+      let j = 0;
+      let previousColumn = -1;
+      let isReducedEchelonForm = true;
+      let checked = false;
+
+      while (i < this.rows && isReducedEchelonForm) {
+        j = 0;
+        checked = false;
+
+        while (j < this.columns && checked === false) {
+          if (this.get(i, j) === 0) {
+            j++;
+          } else if (this.get(i, j) === 1 && j > previousColumn) {
+            checked = true;
+            previousColumn = j;
+          } else {
+            isReducedEchelonForm = false;
+            checked = true;
+          }
+        }
+
+        for (let k = j + 1; k < this.rows; k++) {
+          if (this.get(i, k) !== 0) {
+            isReducedEchelonForm = false;
+          }
+        }
+
+        i++;
+      }
+
+      return isReducedEchelonForm;
     }
     /**
          * Sets a given element of the matrix. mat.set(3,4,1) is equivalent to mat[3][4]=1
@@ -7777,7 +7766,7 @@ function AbstractMatrix(superCtor) {
 
         return Math.sqrt(result);
       } else {
-        throw new RangeError(`unknown norm type: ${type}`);
+        throw new RangeError("unknown norm type: ".concat(type));
       }
     }
     /**
@@ -7970,7 +7959,7 @@ function AbstractMatrix(superCtor) {
 
       if (c1 !== r2) {
         // eslint-disable-next-line no-console
-        console.warn(`Multiplying ${r1} x ${c1} and ${r2} x ${c2} matrix: dimensions do not match.`);
+        console.warn("Multiplying ".concat(r1, " x ").concat(c1, " and ").concat(r2, " x ").concat(c2, " matrix: dimensions do not match."));
       } // Put a matrix into the top left of a matrix of zeros.
       // `rows` and `cols` are the dimensions of the output matrix.
 
@@ -8233,7 +8222,7 @@ function AbstractMatrix(superCtor) {
       for (var i = 0; i < indices.length; i++) {
         for (var j = startColumn; j <= endColumn; j++) {
           if (indices[i] < 0 || indices[i] >= this.rows) {
-            throw new RangeError(`Row index out of range: ${indices[i]}`);
+            throw new RangeError("Row index out of range: ".concat(indices[i]));
           }
 
           newMatrix.set(i, j - startColumn, this.get(indices[i], j));
@@ -8264,7 +8253,7 @@ function AbstractMatrix(superCtor) {
       for (var i = 0; i < indices.length; i++) {
         for (var j = startRow; j <= endRow; j++) {
           if (indices[i] < 0 || indices[i] >= this.columns) {
-            throw new RangeError(`Column index out of range: ${indices[i]}`);
+            throw new RangeError("Column index out of range: ".concat(indices[i]));
           }
 
           newMatrix.set(j - startRow, i, this.get(j, indices[i]));
@@ -8547,106 +8536,17 @@ function AbstractMatrix(superCtor) {
      Add dynamically instance and static methods for mathematical operations
      */
 
-  var inplaceOperator = `
-(function %name%(value) {
-    if (typeof value === 'number') return this.%name%S(value);
-    return this.%name%M(value);
-})
-`;
-  var inplaceOperatorScalar = `
-(function %name%S(value) {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, this.get(i, j) %op% value);
-        }
-    }
-    return this;
-})
-`;
-  var inplaceOperatorMatrix = `
-(function %name%M(matrix) {
-    matrix = this.constructor.checkMatrix(matrix);
-    if (this.rows !== matrix.rows ||
-        this.columns !== matrix.columns) {
-        throw new RangeError('Matrices dimensions must be equal');
-    }
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, this.get(i, j) %op% matrix.get(i, j));
-        }
-    }
-    return this;
-})
-`;
-  var staticOperator = `
-(function %name%(matrix, value) {
-    var newMatrix = new this[Symbol.species](matrix);
-    return newMatrix.%name%(value);
-})
-`;
-  var inplaceMethod = `
-(function %name%() {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j)));
-        }
-    }
-    return this;
-})
-`;
-  var staticMethod = `
-(function %name%(matrix) {
-    var newMatrix = new this[Symbol.species](matrix);
-    return newMatrix.%name%();
-})
-`;
-  var inplaceMethodWithArgs = `
-(function %name%(%args%) {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j), %args%));
-        }
-    }
-    return this;
-})
-`;
-  var staticMethodWithArgs = `
-(function %name%(matrix, %args%) {
-    var newMatrix = new this[Symbol.species](matrix);
-    return newMatrix.%name%(%args%);
-})
-`;
-  var inplaceMethodWithOneArgScalar = `
-(function %name%S(value) {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j), value));
-        }
-    }
-    return this;
-})
-`;
-  var inplaceMethodWithOneArgMatrix = `
-(function %name%M(matrix) {
-    matrix = this.constructor.checkMatrix(matrix);
-    if (this.rows !== matrix.rows ||
-        this.columns !== matrix.columns) {
-        throw new RangeError('Matrices dimensions must be equal');
-    }
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.columns; j++) {
-            this.set(i, j, %method%(this.get(i, j), matrix.get(i, j)));
-        }
-    }
-    return this;
-})
-`;
-  var inplaceMethodWithOneArg = `
-(function %name%(value) {
-    if (typeof value === 'number') return this.%name%S(value);
-    return this.%name%M(value);
-})
-`;
+  var inplaceOperator = "\n(function %name%(value) {\n    if (typeof value === 'number') return this.%name%S(value);\n    return this.%name%M(value);\n})\n";
+  var inplaceOperatorScalar = "\n(function %name%S(value) {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, this.get(i, j) %op% value);\n        }\n    }\n    return this;\n})\n";
+  var inplaceOperatorMatrix = "\n(function %name%M(matrix) {\n    matrix = this.constructor.checkMatrix(matrix);\n    if (this.rows !== matrix.rows ||\n        this.columns !== matrix.columns) {\n        throw new RangeError('Matrices dimensions must be equal');\n    }\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, this.get(i, j) %op% matrix.get(i, j));\n        }\n    }\n    return this;\n})\n";
+  var staticOperator = "\n(function %name%(matrix, value) {\n    var newMatrix = new this[Symbol.species](matrix);\n    return newMatrix.%name%(value);\n})\n";
+  var inplaceMethod = "\n(function %name%() {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j)));\n        }\n    }\n    return this;\n})\n";
+  var staticMethod = "\n(function %name%(matrix) {\n    var newMatrix = new this[Symbol.species](matrix);\n    return newMatrix.%name%();\n})\n";
+  var inplaceMethodWithArgs = "\n(function %name%(%args%) {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j), %args%));\n        }\n    }\n    return this;\n})\n";
+  var staticMethodWithArgs = "\n(function %name%(matrix, %args%) {\n    var newMatrix = new this[Symbol.species](matrix);\n    return newMatrix.%name%(%args%);\n})\n";
+  var inplaceMethodWithOneArgScalar = "\n(function %name%S(value) {\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j), value));\n        }\n    }\n    return this;\n})\n";
+  var inplaceMethodWithOneArgMatrix = "\n(function %name%M(matrix) {\n    matrix = this.constructor.checkMatrix(matrix);\n    if (this.rows !== matrix.rows ||\n        this.columns !== matrix.columns) {\n        throw new RangeError('Matrices dimensions must be equal');\n    }\n    for (var i = 0; i < this.rows; i++) {\n        for (var j = 0; j < this.columns; j++) {\n            this.set(i, j, %method%(this.get(i, j), matrix.get(i, j)));\n        }\n    }\n    return this;\n})\n";
+  var inplaceMethodWithOneArg = "\n(function %name%(value) {\n    if (typeof value === 'number') return this.%name%S(value);\n    return this.%name%M(value);\n})\n";
   var staticMethodWithOneArg = staticMethodWithArgs;
   var operators = [// Arithmetic operators
   ['+', 'add'], ['-', 'sub', 'subtract'], ['*', 'mul', 'multiply'], ['/', 'div', 'divide'], ['%', 'mod', 'modulus'], // Bitwise operators
@@ -8660,11 +8560,11 @@ function AbstractMatrix(superCtor) {
       op: operator[0]
     }));
     var inplaceOpS = eval2(fillTemplateFunction(inplaceOperatorScalar, {
-      name: `${operator[1]}S`,
+      name: "".concat(operator[1], "S"),
       op: operator[0]
     }));
     var inplaceOpM = eval2(fillTemplateFunction(inplaceOperatorMatrix, {
-      name: `${operator[1]}M`,
+      name: "".concat(operator[1], "M"),
       op: operator[0]
     }));
     var staticOp = eval2(fillTemplateFunction(staticOperator, {
@@ -8673,15 +8573,15 @@ function AbstractMatrix(superCtor) {
 
     for (i = 1; i < operator.length; i++) {
       Matrix.prototype[operator[i]] = inplaceOp;
-      Matrix.prototype[`${operator[i]}S`] = inplaceOpS;
-      Matrix.prototype[`${operator[i]}M`] = inplaceOpM;
+      Matrix.prototype["".concat(operator[i], "S")] = inplaceOpS;
+      Matrix.prototype["".concat(operator[i], "M")] = inplaceOpM;
       Matrix[operator[i]] = staticOp;
     }
   }
 
   var methods = [['~', 'not']];
   ['abs', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh', 'cbrt', 'ceil', 'clz32', 'cos', 'cosh', 'exp', 'expm1', 'floor', 'fround', 'log', 'log1p', 'log10', 'log2', 'round', 'sign', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc'].forEach(function (mathMethod) {
-    methods.push([`Math.${mathMethod}`, mathMethod]);
+    methods.push(["Math.".concat(mathMethod), mathMethod]);
   });
 
   for (var method of methods) {
@@ -8705,7 +8605,7 @@ function AbstractMatrix(superCtor) {
     var args = 'arg0';
 
     for (i = 1; i < methodWithArg[1]; i++) {
-      args += `, arg${i}`;
+      args += ", arg".concat(i);
     }
 
     if (methodWithArg[1] !== 1) {
@@ -8736,8 +8636,8 @@ function AbstractMatrix(superCtor) {
 
       for (i = 2; i < methodWithArg.length; i++) {
         Matrix.prototype[methodWithArg[i]] = inplaceMethod2;
-        Matrix.prototype[`${methodWithArg[i]}M`] = inplaceMethodM;
-        Matrix.prototype[`${methodWithArg[i]}S`] = inplaceMethodS;
+        Matrix.prototype["".concat(methodWithArg[i], "M")] = inplaceMethodM;
+        Matrix.prototype["".concat(methodWithArg[i], "S")] = inplaceMethodS;
         Matrix[methodWithArg[i]] = staticMethod2;
       }
     }
@@ -8745,7 +8645,7 @@ function AbstractMatrix(superCtor) {
 
   function fillTemplateFunction(template, values) {
     for (var value in values) {
-      template = template.replace(new RegExp(`%${value}%`, 'g'), values[value]);
+      template = template.replace(new RegExp("%".concat(value, "%"), 'g'), values[value]);
     }
 
     return template;
@@ -10339,14 +10239,10 @@ exports.desc = function (a, b) {
 
 /***/ }),
 /* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(module) {/* unused harmony export nmrJ */
-/* unused harmony export joinCoupling */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return group; });
-/* unused harmony export compilePattern */
 const patterns = ['s', 'd', 't', 'q', 'quint', 'h', 'sept', 'o', 'n'];
+
 function nmrJ(Js) {
   let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var jString = '';
@@ -10363,11 +10259,12 @@ function nmrJ(Js) {
       j += options.separator;
     }
 
-    jString += `${j.multiplicity} ${j.coupling.toFixed(options.nbDecimal)}`;
+    jString += "".concat(j.multiplicity, " ").concat(j.coupling.toFixed(options.nbDecimal));
   }
 
   return jString;
 }
+
 function joinCoupling(signal) {
   let tolerance = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.05;
   var jc = signal.j;
@@ -10448,6 +10345,7 @@ function joinCoupling(signal) {
 
   return pattern;
 }
+
 function group(signals) {
   let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var i, k;
@@ -10492,11 +10390,12 @@ function group(signals) {
     } // console.log(signals[i]);
 
 
-    signals[i].multiplicity = module.exports.compilePattern(signals[i], options.tolerance);
+    signals[i].multiplicity = compilePattern(signals[i], options.tolerance);
   }
 
   return signals;
 }
+
 function compilePattern(signal) {
   let tolerance = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.05;
   var jc = signal.j;
@@ -10526,7 +10425,13 @@ function compilePattern(signal) {
 
   return pattern;
 }
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(84)(module)))
+
+module.exports = {
+  compilePattern,
+  group,
+  joinCoupling,
+  nmrJ
+};
 
 /***/ }),
 /* 21 */
@@ -10535,7 +10440,7 @@ function compilePattern(signal) {
 "use strict";
 
 
-module.exports = __webpack_require__(85);
+module.exports = __webpack_require__(84);
 
 /***/ }),
 /* 22 */
@@ -12267,7 +12172,7 @@ function search(query) {
       break;
 
     default:
-      throw new Error(`unknown search mode: ${options.mode}`);
+      throw new Error("unknown search mode: ".concat(options.mode));
   }
 
   return processResult(result, {
@@ -13578,7 +13483,7 @@ module.exports = function (OCL) {
   }
 
   function format3(number) {
-    var length = `${number}`.length;
+    var length = "".concat(number).length;
     return '   '.substring(0, 3 - length) + number;
   }
 
@@ -13696,7 +13601,7 @@ module.exports = function getAllPaths() {
     for (var to = 0; to < this.getAllAtoms(); to++) {
       if (!fromLabel || this.getAtomLabel(from) === fromLabel) {
         if (!toLabel || this.getAtomLabel(to) === toLabel) {
-          var key = `${diaIDs[from]}_${diaIDs[to]}`;
+          var key = "".concat(diaIDs[from], "_").concat(diaIDs[to]);
           var pathLength = pathLengthMatrix[from][to];
 
           if (pathLength >= minLength && pathLength <= maxLength) {
@@ -16780,7 +16685,7 @@ module.exports = function getMF() {
         charge += atom.charge;
 
         if (atom.mass) {
-          label = `[${atom.mass}${label}]`;
+          label = "[".concat(atom.mass).concat(label, "]");
         }
 
         var mfAtom = mfs[label];
@@ -16846,9 +16751,9 @@ module.exports = function getMF() {
     }
 
     if (charge > 0) {
-      mf += `(+${charge > 1 ? charge : ''})`;
+      mf += "(+".concat(charge > 1 ? charge : '', ")");
     } else if (charge < 0) {
-      mf += `(${charge < -1 ? charge : '-'})`;
+      mf += "(".concat(charge < -1 ? charge : '-', ")");
     }
 
     return mf;
@@ -17011,7 +16916,7 @@ function calculatedCoupling(molecule, coupling, fragmentsId, matchFragments) {
     }
 
     if (possibleCouplings !== null) {
-      coupling.value = possibleCouplings[`${C1}-${C2}`];
+      coupling.value = possibleCouplings["".concat(C1, "-").concat(C2)];
     }
 
     return true;
@@ -17675,7 +17580,7 @@ module.exports = function toDiastereotopicSVG() {
   if (!svg) svg = this.toSVG(width, height, prefix);
   svg = svg.replace(/Atom:[0-9]+"/g, function (value) {
     var atom = value.replace(/[^0-9]/g, '');
-    return `${value} data-atomid="${diaIDs[atom].join(',')}"`;
+    return "".concat(value, " data-atomid=\"").concat(diaIDs[atom].join(','), "\"");
   });
   return svg;
 };
@@ -18235,7 +18140,7 @@ module.exports = function (OCL) {
         _options$kind = options.kind,
         kind = _options$kind === undefined ? FULL_HOSE_CODE : _options$kind;
     var molecule = this.getCompactCopy();
-    molecule.setAtomCustomLabel(rootAtom, `${molecule.getAtomLabel(rootAtom)}*`);
+    molecule.setAtomCustomLabel(rootAtom, "".concat(molecule.getAtomLabel(rootAtom), "*"));
     molecule.setAtomicNo(rootAtom, OCL.Molecule.getAtomicNoFromLabel('X'));
     var fragment = new OCL.Molecule(0, 0);
     var results = [];
@@ -18517,36 +18422,6 @@ module.exports = Number.isNaN || function (x) {
 
 /***/ }),
 /* 84 */
-/***/ (function(module, exports) {
-
-module.exports = function (originalModule) {
-  if (!originalModule.webpackPolyfill) {
-    var module = Object.create(originalModule); // module.parent = undefined by default
-
-    if (!module.children) module.children = [];
-    Object.defineProperty(module, "loaded", {
-      enumerable: true,
-      get: function get() {
-        return module.l;
-      }
-    });
-    Object.defineProperty(module, "id", {
-      enumerable: true,
-      get: function get() {
-        return module.i;
-      }
-    });
-    Object.defineProperty(module, "exports", {
-      enumerable: true
-    });
-    module.webpackPolyfill = 1;
-  }
-
-  return module;
-};
-
-/***/ }),
-/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18835,7 +18710,7 @@ function spinus(molecule, options) {
   molecule = _normalizeOptions2[0];
   options = _normalizeOptions2[1];
   return fromSpinus(molecule).then(prediction => {
-    return options.group ? Object(src["a" /* group */])(prediction) : prediction;
+    return options.group ? Object(src["group"])(prediction) : prediction;
   });
 }
 
@@ -18861,7 +18736,7 @@ function fromSpinus(molecule) {
 
     for (j = diaIDs.length - 1; j >= 0; j--) {
       if (diaIDs[j].atomLabel === 'H') {
-        oclID = `${diaIDs[j].oclID}`;
+        oclID = "".concat(diaIDs[j].oclID);
 
         for (k = diaIDs[j].atoms.length - 1; k >= 0; k--) {
           atoms[diaIDs[j].atoms[k]] = oclID;
@@ -19187,9 +19062,9 @@ function getDb(option, type) {
   if (typeof option === 'object') return option;
   if (typeof option !== 'string') throw new TypeError('database option must be a string or array');
   const db = databases[option];
-  if (!db) throw new Error(`database ${option} does not exist. Did you forget to fetch it?`);
-  if (db.fetching) throw new Error(`database ${option} is not fetched yet`);
-  if (db.type !== type) throw new Error(`database ${option} is of type ${db.type} instead of ${type}`);
+  if (!db) throw new Error("database ".concat(option, " does not exist. Did you forget to fetch it?"));
+  if (db.fetching) throw new Error("database ".concat(option, " is not fetched yet"));
+  if (db.type !== type) throw new Error("database ".concat(option, " is of type ").concat(db.type, " instead of ").concat(type));
   return db.db;
 }
 
